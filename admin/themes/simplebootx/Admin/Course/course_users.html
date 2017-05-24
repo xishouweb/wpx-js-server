@@ -1,0 +1,48 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li ><a href="{:U('Course/alllist')}">{:L('COURSE_ALL')}</a></li>
+        <li class="active"><a>{:L('COURSE_USER')}</a></li>
+    </ul>
+    <table class="table table-hover table-bordered table-list" id="menus-table">
+        <thead>
+        <tr>
+            <th width="250">ID</th>
+            <th>{:L('USER_WX_NAME')}</th>
+            <th>{:L('USER_HEADER_IMG')}</th>
+            <th>{:L('USER_TRUE_NAME')}</th>
+            <th>{:L('USER_TEL')}</th>
+            <th>{:L('USER_OPENID')}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach name="users" item="user">
+            <tr>
+                <td>
+                    {$user.id}
+                </td>
+                <td>
+                    {$user.name}
+                </td>
+                <td>
+                    <img src="{$user.head_img}" style="width: 30px;">
+                </td>
+                <td>
+                    {$user.true_name}
+                </td>
+                <td>
+                    {$user.tel}
+                </td>
+                <td>
+                    {$user.openid}
+                </td>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

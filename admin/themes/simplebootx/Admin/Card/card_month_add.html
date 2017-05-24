@@ -1,0 +1,61 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('card/card_month')}">{:L('CARD_MONTH_ALL')}</a></li>
+        <li class="active"><a href="{:U('card/card_month_add')}">{:L('CARD_MONTH_ADD')}</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Card/addMonth')}">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label">{:L('CARD_NAME')}</label>
+                <div class="controls">
+                    <input type="text" name="cname" required>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{:L('CARD_DESC')}</label>
+                <div class="controls">
+                    <textarea name="cdesc"></textarea>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{:L('CARD_FTYPE')}</label>
+                <div class="controls">
+                    <select name="cftype">
+                        <option value="0">选择分类</option>
+                        <foreach name="cftypes" item="cftype">
+                            <option value="{$cftype.id}">{$cftype.tname}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{:L('CARD_DAY')}</label>
+                <div class="controls">
+                    <input type="number" name="cdays" required>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{:L('CARD_PRICE')}</label>
+                <div class="controls">
+                    <input type="number" name="cprice" required>元 *
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{:L('CARD_OLD_PRICE')}</label>
+                <div class="controls">
+                    <input type="number" name="old_price">元
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:L('ADD')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

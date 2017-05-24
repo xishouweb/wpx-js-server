@@ -1,0 +1,76 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('card/card_times')}">{:L('CARD_MONTH_ALL')}</a></li>
+        <li><a href="{:U('card/card_times_add')}">{:L('CARD_MONTH_ADD')}</a></li>
+        <li class="active"><a href="#">{:L('CARD_MONTH_EDIT')}</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Card/editMonth')}">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label">{:L('CARD_NAME')}</label>
+                <div class="controls">
+                    <input type="text" name="cname" required value="{$card.cname}">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{:L('CARD_DESC')}</label>
+                <div class="controls">
+                    <textarea name="cdesc">{$card.cdesc}</textarea>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{:L('CARD_FTYPE')}</label>
+                <div class="controls">
+                    <select name="cftype">
+                        <option value="{$card.cftype.id}">{$card.cftype.name}</option>
+                        <foreach name="cftypes" item="cftype">
+                            <option value="{$cftype.id}">{$cftype.tname}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{:L('CARD_DAY')}</label>
+                <div class="controls">
+                    <input type="number" name="cdays" required value="{$card.cdays}">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{:L('CARD_PRICE')}</label>
+                <div class="controls">
+                    <input type="number" name="cprice" required value="{$card.cprice}">元
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{:L('CARD_OLD_PRICE')}</label>
+                <div class="controls">
+                    <input type="number" name="old_price" value="{$card.old_price}">元
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">是否可用</label>
+                <div class="controls">
+                    <if condition="$card.state eq 0">
+                        <label><input type="radio" name="state" checked value="0"> 不可用</label>
+                        <label><input type="radio" name="state" value="1"> 可用</label>
+                    </if>
+                    <if condition="$card.state eq 1">
+                        <label><input type="radio" name="state" value="0" > 不可用</label>
+                        <label><input type="radio" name="state" value="1" checked> 可用</label>
+                    </if>
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-actions">
+            <input type="hidden" name="id" required value="{$card.id}">
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:L('EDIT')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

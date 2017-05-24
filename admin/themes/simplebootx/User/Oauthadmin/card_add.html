@@ -1,0 +1,52 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('oauthadmin/index')}">{:L('USER_OAUTHADMIN_INDEX')}</a></li>
+        <li class="active"><a href="{:U('oauthadmin/card_add',array('id'=>$userid))}">{:L('CARD_ADD')}</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('oauthadmin/addCards')}">
+        <input type="hidden" name="userId" value="{$userid}">
+
+        <table class="table table-hover table-bordered table-list" id="menus-table">
+            <thead>
+            <tr>
+                <th>{:L('CARD_NAME')}</th>
+                <th>{:L('CARD_FTYPE')}</th>
+                <th>{:L('CARD_PRICE')}</th>
+                <th>{:L('CARD_DAY')}</th>
+                <th>{:L('_ACTION_')}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="cards" item="card">
+                <tr>
+                    <td>
+                        {$card.cname}
+                    </td>
+                    <td>
+                        {$card.cftype}
+                    </td>
+                    <td>
+                        {$card.cprice}
+                    </td>
+                    <td>
+                        {$card.cdays}
+                    </td>
+                    <td>
+                        <input name="cardId" type="radio" value="{$card.id}"/>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <div class="form-actions">
+            选择消费卡,注意看好卡的类别,只能单选
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

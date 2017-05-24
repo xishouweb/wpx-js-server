@@ -1,0 +1,76 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('course/type')}">{:L('COURSE_TYPE')}</a></li>
+        <li class="active"><a href="{:U('course/type_add')}">{:L('COURSE_TYPE_ADD')}</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('course/add_type')}">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label">{:L('COURSE_NAME')}</label>
+                <div class="controls">
+                    <input type="text" name="tname" required>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">配色</label>
+                <div class="controls">
+                    <img src="__TMPL__Public/assets/images/tag.png" style="height: 100px">
+                    <select name="tag">
+                        <option value="green" >green</option>
+                        <option value="pink" >pink</option>
+                        <option value="orange" >orange</option>
+                        <option value="cyan" >cyan</option>
+                        <option value="blue" >blue</option>
+                        <option value="purple" >purple</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{:L('COURSE_DESC')}</label>
+                <div class="controls">
+                    <script type="text/plain" id="content2" name="tdesc"></script>
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:L('ADD')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        Wind.use('validate', 'ajaxForm', 'artDialog', function () {
+            //javascript
+
+            //编辑器
+            editorcontent = new baidu.editor.ui.Editor();
+            editorcontent.render('content2');
+            try {
+                editorcontent.sync();
+            } catch (err) {
+            }
+            //增加编辑器验证规则
+            jQuery.validator.addMethod('editorcontent', function () {
+                try {
+                    editorcontent.sync();
+                } catch (err) {
+                }
+                ;
+                return editorcontent.hasContents();
+            });
+        });
+    });
+</script>
+</body>
+</html>

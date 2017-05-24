@@ -1,0 +1,73 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('course/type')}">{:L('COURSE_TYPE')}</a></li>
+        <li><a href="{:U('course/type_add')}">{:L('COURSE_TYPE_ADD')}</a></li>
+    </ul>
+    <table class="table table-hover table-bordered table-list" id="menus-table">
+        <thead>
+        <tr>
+            <th width="50">ID</th>
+            <th width="60">图标</th>
+            <th>{:L('COURSE_NAME')}</th>
+            <th>配色</th>
+            <th>可用</th>
+            <th>{:L('_ACTION_')}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach name="types" item="courseType">
+            <tr>
+                <td>
+                    {$courseType.id}
+                </td>
+                <td>
+                    <img src="{$courseType.icon}" style="height: 50px">
+                </td>
+                <td>
+                    {$courseType.tname}
+                </td>
+                <td>
+                    {$courseType.tag}
+                </td>
+                <td>
+                    <if condition="$courseType.state eq 0">
+                        <label class="label label-warning"> 不可用</label>
+                    </if>
+                    <if condition="$courseType.state eq 1">
+                        <label class="label label-success"> 可用</label>
+                    </if>
+                </td>
+                <td>
+                    <a href="{:U('course/type_edit',array('id'=>$courseType['id']))}">
+                        <button class="btn btn-danger btn-small">{:L('EDIT')}</button>
+                    </a>
+                </td>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    $(document).ready(function () {
+        Wind.css('treeTable');
+        Wind.use('treeTable', function () {
+            $("#menus-table").treeTable({
+                indent: 20
+            });
+        });
+    });
+
+    setInterval(function () {
+        var refersh_time = getCookie('refersh_time_admin_menu_index');
+        if (refersh_time == 1) {
+            reloadPage(window);
+        }
+    }, 1000);
+    setCookie('refersh_time_admin_menu_index', 0);
+</script>
+</body>
+</html>

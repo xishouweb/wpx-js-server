@@ -1,0 +1,45 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('oauthadmin/index')}">{:L('USER_OAUTHADMIN_INDEX')}</a></li>
+        <li class="active"><a>{:L('CARD_RECORD')}</a></li>
+    </ul>
+
+    <form method="post" class="js-ajax-form">
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th align="center">ID</th>
+                <th>{:L('CARD_CNAME')}</th>
+                <th>{:L('WX_TRA')}</th>
+                <th>{:L('CARD_CASHFEE')}</th>
+                <th>{:L('CARD_BUY_TIME')}</th>
+                <th>{:L('CARD_EXPIRE_TIME')}</th>
+                <th>{:L('CARD_USE_TIMES')}</th>
+                <th align="center">{:L('ACTIONS')}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="cards" item="card">
+                <tr>
+                    <td align="center">{$card.id}</td>
+                    <td>{$card.cname}</td>
+                    <td>{$card.transactionid}</td>
+                    <td>{$card.cashfee}</td>
+                    <td>{$card.buy_time}</td>
+                    <td>{$card.expire_time}</td>
+                    <td>{$card['use_number']|default='不限次'}</td>
+                    <td align="center">
+                        <a href="{:U('oauthadmin/deleteCard',array('id'=>$card['id'],'userId'=>$userid))}" class="js-ajax-delete">{:L('DELETE')}</a>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

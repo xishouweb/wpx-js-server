@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$name} {$seo_title} {$site_name}</title>
+    <meta name="keywords" content="{$seo_keywords}"/>
+    <meta name="description" content="{$seo_description}">
+    <tc_include file="Public:head"/>
+</head>
+<body>
+<tc_include file="Public:nav"/>
+<div class="container tc-main">
+    <h2>{$name}</h2>
+    <div class="row">
+        <div class="span9">
+            <php>
+                $teachers=teachers();
+            </php>
+            <div class="list-group ">
+                <foreach name="teachers" item="teacher">
+                    <a href="#" class="list-group-item  row">
+                        <img class="list-group-item-heading teacher-img" src="{$teacher.headimg}">
+                        <p class="list-group-item-text">{$teacher.tname}</p>
+                    </a>
+                </foreach>
+            </div>
+
+        </div>
+        <div class="span3">
+
+        </div>
+    </div>
+
+
+    <tc_include file="Public:footer"/>
+</div>
+
+
+<!-- JavaScript -->
+<tc_include file="Public:scripts"/>
+</body>
+</html>
