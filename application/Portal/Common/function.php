@@ -262,6 +262,6 @@ function sp_get_breadcrumb($term_id){
 
 //获取教练 可用的
 function teachers(){
-	$teachers=D("teacher")->where(array("state"=>1))->select();
+	$teachers=D("teacher")->where(array("state"=>1))->order("orders desc")->select();
 	return $teachers;
 }

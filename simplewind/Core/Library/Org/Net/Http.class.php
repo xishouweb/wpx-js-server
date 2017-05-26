@@ -235,7 +235,7 @@ class Http {
 			// 306 is deprecated but reserved
 			307 => 'Temporary Redirect',
 
-			// Client Error 4xx
+			// Client.class Error 4xx
 			400 => 'Bad Request',
 			401 => 'Unauthorized',
 			402 => 'Payment Required',

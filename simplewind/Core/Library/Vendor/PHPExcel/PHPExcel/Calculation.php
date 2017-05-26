@@ -61,7 +61,7 @@ if (!defined('CALCULATION_REGEXP_CELLREF')) {
  */
 class PHPExcel_Calculation {
 
-	/** Constants				*/
+	/** Constants.class				*/
 	/** Regular Expressions		*/
 	//	Numeric operand
 	const CALCULATION_REGEXP_NUMBER		= '[-+]?\d*\.?\d+(e[-+]?\d+)?';

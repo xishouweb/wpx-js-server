@@ -20,7 +20,7 @@ class BorisBehavior {
                 E("pcntl_signal not working.\nRepl mode based on Linux OS or PHP for OS X(http://php-osx.liip.ch/)\n");
             Think::addMap(array(
                 'Boris\Boris'               => VENDOR_PATH . 'Boris/Boris.php',
-                'Boris\Config'              => VENDOR_PATH . 'Boris/Config.php',
+                'Boris\Config'              => VENDOR_PATH . 'Boris/Config.class.phpss.php',
                 'Boris\CLIOptionsHandler'   => VENDOR_PATH . 'Boris/CLIOptionsHandler.php',
                 'Boris\ColoredInspector'    => VENDOR_PATH . 'Boris/ColoredInspector.php',
                 'Boris\DumpInspector'       => VENDOR_PATH . 'Boris/DumpInspector.php',

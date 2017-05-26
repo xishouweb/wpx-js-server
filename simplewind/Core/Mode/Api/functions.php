@@ -1079,7 +1079,7 @@ function send_http_status($code) {
         // Redirection 3xx
         301 => 'Moved Permanently',
         302 => 'Moved Temporarily ',  // 1.1
-        // Client Error 4xx
+        // Client.class Error 4xx
         400 => 'Bad Request',
         403 => 'Forbidden',
         404 => 'Not Found',

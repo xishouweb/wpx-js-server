@@ -36,7 +36,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, ToArra
         $data = $config + $defaults;
 
         if ($missing = array_diff($required, array_keys($data))) {
-            throw new InvalidArgumentException('Config is missing the following keys: ' . implode(', ', $missing));
+            throw new InvalidArgumentException('Config.class is missing the following keys: ' . implode(', ', $missing));
         }
 
         return new self($data);

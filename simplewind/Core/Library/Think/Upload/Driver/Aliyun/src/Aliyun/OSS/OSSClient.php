@@ -398,7 +398,7 @@ class OSSClient {
                 OSSOptions::ACCESS_KEY_SECRET,
         ), $config);
 
-        // Config client
+        // Config.class client
         $this->endpoint =  $config[OSSOptions::ENDPOINT];
         $this->credentials = array(
                 OSSOptions::ACCESS_KEY_ID => $config[OSSOptions::ACCESS_KEY_ID],

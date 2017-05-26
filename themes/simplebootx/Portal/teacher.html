@@ -7,7 +7,7 @@
     <tc_include file="Public:head"/>
 </head>
 <body>
-<tc_include file="Public:nav"/>
+<tc_include file="Public:nav" />
 <div class="container tc-main">
     <h2>{$name}</h2>
     <div class="row">
@@ -15,15 +15,28 @@
             <php>
                 $teachers=teachers();
             </php>
-            <div class="list-group ">
+            <div class="list-group">
                 <foreach name="teachers" item="teacher">
-                    <a href="#" class="list-group-item  row">
-                        <img class="list-group-item-heading teacher-img" src="{$teacher.headimg}">
-                        <p class="list-group-item-text">{$teacher.tname}</p>
-                    </a>
+                    <div class="row teacher-item">
+                        <div class="col-sm-6 col-md-4">
+                            <div class="thumbnail">
+                                <table>
+                                    <tr>
+                                        <td style="width: 160px">
+                                            <img src="{$teacher.headimg}" alt="..." width="150px">
+                                            <h3>{$teacher.tname}</h3>
+                                        </td>
+                                        <td>
+                                            <span>{$teacher.sign}</span>
+                                            <p>{$teacher.tdesc}</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </foreach>
             </div>
-
         </div>
         <div class="span3">
 
