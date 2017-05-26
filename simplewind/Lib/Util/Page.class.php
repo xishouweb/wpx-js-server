@@ -111,7 +111,7 @@ class Page {
         //是否开启静态
         $this->Static = $Static;
 
-        $this->Page_tpl ['default'] = array('Tpl' => '<div class="pager">{first}{prev}{liststart}{list}{listend}{next}{last} 跳转到{jump}页</div>', 'Config' => array());
+        $this->Page_tpl ['default'] = array('Tpl' => '<div class="pager">{first}{prev}{liststart}{list}{listend}{next}{last} 跳转到{jump}页</div>', 'Config.class' => array());
 
         $this->GetCurrentPage();
 
@@ -183,8 +183,8 @@ class Page {
         if (empty($Tpl))
             $Tpl = $this->Page_tpl ['default'] ['Tpl'];
         if (empty($Config))
-            $Config = $this->Page_tpl ['default'] ['Config'];
-        $this->Page_tpl [$Tpl_Name] = array('Tpl' => $Tpl, 'Config' => $Config);
+            $Config = $this->Page_tpl ['default'] ['Config.class'];
+        $this->Page_tpl [$Tpl_Name] = array('Tpl' => $Tpl, 'Config.class' => $Config);
     }
 
     public function show($Tpl_Name = 'default') {
@@ -207,8 +207,8 @@ class Page {
             $Page_tpl = $this->Page_tpl ['default'];
         $_GET=array_merge($_GET,$_POST);
         $cfg = array('recordcount' => intval($this->Total_Size), 'pageindex' => intval($this->Current_page), 'pagecount' => intval($this->Total_Pages), 'pagesize' => intval($this->Page_size), 'listlong' => intval($this->List_Page), 'listsidelong' => 2, 'list' => '*', 'currentclass' => 'current', 'link' => $this->UrlParameters($_GET), 'first' => '&laquo;', 'prev' => '&#8249;', 'next' => '&#8250;', 'last' => '&raquo;', 'more' => $this->linkwraper_pre.'<span>...</span>'.$this->linkwraper_after, 'disabledclass' => 'disabled', 'jump' => 'input', 'jumpplus' => '', 'jumpaction' => '', 'jumplong' => 50);
-        if (!empty($Page_tpl ['Config'])) {
-            foreach ($Page_tpl ['Config'] as $key => $val) {
+        if (!empty($Page_tpl ['Config.class'])) {
+            foreach ($Page_tpl ['Config.class'] as $key => $val) {
                 if (array_key_exists($key, $cfg))
                     $cfg [$key] = $val;
             }

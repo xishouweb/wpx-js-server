@@ -12,6 +12,7 @@
 
 namespace Restful\Controller;
 
+use Restful\Common\SendMNS;
 use Think\Controller;
 
 class OauthController extends Controller
@@ -26,7 +27,6 @@ class OauthController extends Controller
         $app = $wxapp->where(array("isuse" => 1))->find();
         $this->appId = $app["appid"];
         $this->appSecret = $app["appsecret"];
-
     }
 
     public function login($sourceUrl)
@@ -61,17 +61,17 @@ class OauthController extends Controller
         //http://www.wexue.top:11111/index.php?g=Restful&m=Oauth&a=wechatUser&code=222&state=333
         $url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=' . $this->appId . '&secret=' . $this->appSecret . '&code=' . $code . '&grant_type=authorization_code';
         $user = null;
-        $id=null;
+        $id = null;
         try {
             $result = $this->httpGet($url);
             $obj = json_decode($result);
             $openid = $obj->openid;
 
-            $user = D("Oauth_user")->where(array("openid"=>$openid))->find();
-            if(empty($user)){
-                $id= D("Oauth_user")->add(array("openid"=>$openid));
-            }else{
-                $id=$user["id"];
+            $user = D("Oauth_user")->where(array("openid" => $openid))->find();
+            if (empty($user)) {
+                $id = D("Oauth_user")->add(array("openid" => $openid));
+            } else {
+                $id = $user["id"];
             }
         } catch (Exception $e) {
             echo $e->getTraceAsString();
@@ -111,7 +111,7 @@ class OauthController extends Controller
                 'remark' => $uf['remark'],
                 'groupid' => $uf['groupid']
             );
-            $result = D("Oauth_user")->where(array("id"=>$u))->save($ufarray);
+            $result = D("Oauth_user")->where(array("id" => $u))->save($ufarray);
             $user = D("Oauth_user")->find($u);
         } else {
             D("Oauth_user")->where(array('id' => $u))->save(array("last_login_time" => date("Y-m-d H:i:s"), "last_login_ip" => get_client_ip(0, true), "login_times" => ($user["login_times"] + 1)));
@@ -244,18 +244,6 @@ class OauthController extends Controller
         return $access_token;
     }
 
-    private function httpGet($url)
-    {
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 500);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_URL, $url);
-        $res = curl_exec($curl);
-        curl_close($curl);
-        return $res;
-    }
 
     function curl_post_ssl($url, $vars, $second = 30, $aHeader = array())
     {
@@ -315,7 +303,7 @@ class OauthController extends Controller
            "url":"http://gm.wujiesheying.com:8080/vip",  
            "miniprogram":{
              "appid":"wx1d82d29572bf34e8",
-             "pagepath":"pages/main/index?cid='.$courseId.'@'.$userId.'"
+             "pagepath":"pages/main/index?cid=' . $courseId . '@' . $userId . '"
            },      
            "data":{
             "first": {
@@ -380,9 +368,9 @@ class OauthController extends Controller
 //欢迎加入健身大家庭。很开心看到您启动了健康幸福生活的按钮，让我们一起运动改变生活！
     public function sendTemMsgForWxPay($openid, $cardId)
     {
-        $user=D("oauth_user")->field("id")->where(array("openid"=>$openid))->find();
-        $card= D("card")->find($cardId);
-        $card_type= D("course_type")->find($card["cftype"]);
+        $user = D("oauth_user")->field("id")->where(array("openid" => $openid))->find();
+        $card = D("card")->find($cardId);
+        $card_type = D("course_type")->find($card["cftype"]);
         $msg = '{
            "touser":"' . $openid . '",
            "template_id":"3U_ChtNt0ZNjvFPm-2NWuKR65OuzFVYpi4NoRpbOgYE",
@@ -393,7 +381,7 @@ class OauthController extends Controller
                        "color":"#173177"
                    },
                    "keyword1":{
-                       "value":"' . $card_type["tname"].'",
+                       "value":"' . $card_type["tname"] . '",
                        "color":"#FF0000"
                    },
                    "keyword2": {
@@ -420,6 +408,21 @@ class OauthController extends Controller
         echo(json_encode($result));
     }
 
+    //发送验证码
+    public function sendCheckShartMsg($tel, $userid)
+    {
+        $code = rand(1000, 9999);
+        D("oauth_user")->save(array("id" => $userid, "checkcode" => $code));
+        $sms = new SendMNS();
+        //测试模式
+        $status = $sms->send_verify($tel, $code);
+        if (!$status) {
+            echo $sms->error;
+        }
+        echo 'success';
+
+    }
+
     private function https_post($url, $data)
     {
         $curl = curl_init();
@@ -437,5 +440,17 @@ class OauthController extends Controller
         return $result;
     }
 
+    private function httpGet($url)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 500);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_URL, $url);
+        $res = curl_exec($curl);
+        curl_close($curl);
+        return $res;
+    }
 
 }

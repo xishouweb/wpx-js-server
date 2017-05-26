@@ -5046,7 +5046,7 @@ abstract class phpQuery {
 			$client->resetParameters();
 		} else {
 			// create new XHR object
-			require_once('Zend/Http/Client.php');
+			require_once('Zend/Http/Client.class.class.class.php');
 			$client = new Zend_Http_Client();
 			$client->setCookieJar();
 		}

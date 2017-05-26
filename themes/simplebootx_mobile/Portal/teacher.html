@@ -7,7 +7,8 @@
     <tc_include file="Public:head"/>
 </head>
 <body>
-<div class="container tc-main">
+<tc_include file="Public:nav"/>
+<div class="container tc-main" style="margin-top: 80px">
     <h2>{$name}</h2>
     <div class="row">
         <div class="span9">
@@ -22,18 +23,14 @@
                                 <img src="{$teacher.headimg}" alt="...">
                                 <div class="caption">
                                     <h3>{$teacher.tname}</h3>
+                                     <span>{$teacher.sign}</span>
                                     <p>{$teacher.tdesc}</p>
-                                    <p>
-                                        <a href="#" class="btn btn-gm fill" role="button">约他</a>
-                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </foreach>
             </div>
-
-
         </div>
         <div class="span3">
 

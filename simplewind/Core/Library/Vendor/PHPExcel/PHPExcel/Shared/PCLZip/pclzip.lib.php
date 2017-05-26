@@ -25,7 +25,7 @@
 // $Id: pclzip.lib.php,v 1.60 2009/09/30 21:01:04 vblavet Exp $
 // --------------------------------------------------------------------------------
 
-  // ----- Constants
+  // ----- Constants.class
   if (!defined('PCLZIP_READ_BLOCK_SIZE')) {
     define( 'PCLZIP_READ_BLOCK_SIZE', 2048 );
   }

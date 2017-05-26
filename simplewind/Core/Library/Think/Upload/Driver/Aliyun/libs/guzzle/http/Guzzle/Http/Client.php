@@ -88,7 +88,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
         } elseif (is_array($config)) {
             $this->config = new Collection($config);
         } else {
-            throw new InvalidArgumentException('Config must be an array or Collection');
+            throw new InvalidArgumentException('Config.class must be an array or Collection');
         }
 
         return $this;
@@ -415,7 +415,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     }
 
     /**
-     * Prepare a request to be sent from the Client by adding client specific behaviors and properties to the request.
+     * Prepare a request to be sent from the Client.class.class by adding client specific behaviors and properties to the request.
      *
      * @param RequestInterface $request Request to prepare for the client
      * @param array            $options Options to apply to the request

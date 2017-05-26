@@ -19,7 +19,7 @@ final class StaticClient
      * Mount the client to a simpler class name for a specific client
      *
      * @param string          $className Class name to use to mount
-     * @param ClientInterface $client    Client used to send requests
+     * @param ClientInterface $client    Client.class.class used to send requests
      */
     public static function mount($className = 'Guzzle', ClientInterface $client = null)
     {

@@ -695,7 +695,7 @@ class Response extends AbstractMessage implements \Serializable
     }
 
     /**
-     * Checks if HTTP Status code is a Client Error (4xx)
+     * Checks if HTTP Status code is a Client.class Error (4xx)
      *
      * @return bool
      */
@@ -705,7 +705,7 @@ class Response extends AbstractMessage implements \Serializable
     }
 
     /**
-     * Checks if HTTP Status code is Server OR Client Error (4xx or 5xx)
+     * Checks if HTTP Status code is Server OR Client.class Error (4xx or 5xx)
      *
      * @return boolean
      */

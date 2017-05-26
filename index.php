@@ -20,7 +20,7 @@ if (ini_get('magic_quotes_gpc')) {
     $_POST = stripslashesRecursive($_POST);
 }
 //开启调试模式
-define("APP_DEBUG", true);
+define("APP_DEBUG", false);
 //网站当前路径
 define('SITE_PATH', dirname(__FILE__) . "/");
 //项目路径，不可更改
@@ -62,7 +62,7 @@ $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 $allow_origin = array(
     'http://gm.wujiesheying.com:8080',
     'http://gm.wujiesheying.com:8000',
-
+    'http://www.gm-fitness.com:8080',
     'http://localhost:3000'
 );
 

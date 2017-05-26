@@ -165,7 +165,7 @@ class CurlMulti extends AbstractHasDispatcher implements CurlMultiInterface
                 }
             }
         } catch (\Exception $e) {
-            // Queue the exception to be thrown when sent
+            // Queue.class the exception to be thrown when sent
             $this->removeErroredRequest($request, $e);
         }
     }

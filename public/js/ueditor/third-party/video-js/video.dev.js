@@ -1899,7 +1899,7 @@ vjs.Component.prototype.triggerReady = function(){
       readyQueue[i].call(this);
     }
 
-    // Reset Ready Queue
+    // Reset Ready Queue.class
     this.readyQueue_ = [];
 
     // Allow for using event listeners also, in case you want to do something everytime a source is ready.

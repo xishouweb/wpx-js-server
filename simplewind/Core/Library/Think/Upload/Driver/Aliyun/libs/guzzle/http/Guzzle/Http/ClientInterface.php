@@ -9,7 +9,7 @@ use Guzzle\Http\Message\EntityEnclosingRequestInterface;
 use Guzzle\Http\Message\RequestInterface;
 
 /**
- * Client interface for send HTTP requests
+ * Client.class interface for send HTTP requests
  */
 interface ClientInterface extends HasDispatcherInterface
 {

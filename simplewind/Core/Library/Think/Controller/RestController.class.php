@@ -146,7 +146,7 @@ class RestController extends Controller {
             305 => 'Use Proxy',
             // 306 is deprecated but reserved
             307 => 'Temporary Redirect',
-            // Client Error 4xx
+            // Client.class.class Error 4xx
             400 => 'Bad Request',
             401 => 'Unauthorized',
             402 => 'Payment Required',
