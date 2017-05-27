@@ -1,4 +1,5 @@
 <?php
+
 namespace Admin\Controller;
 
 use Common\Controller\AdminbaseController;
@@ -37,6 +38,11 @@ class MainController extends AdminbaseController
             L('DISK_FREE_SPACE') => round((@disk_free_space(".") / (1024 * 1024)), 2) . 'M',
         );
         $this->assign('server_info', $info);
+        $this->display();
+    }
+
+    public function check()
+    {
         $this->display();
     }
 }

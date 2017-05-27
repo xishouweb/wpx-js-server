@@ -1,0 +1,47 @@
+<admintpl file="header"/>
+<style>
+    .home_info li em {
+        float: left;
+        width: 120px;
+        font-style: normal;
+    }
+
+    li {
+        list-style: none;
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <input id="check" autofocus="autofocus" class="input" style="height: 100px;width: 90%;border: solid #ff8d44 2px;border-radius: 20px;font-size: 30px">
+
+    <div>
+        <h3>该用户今天的课程</h3>
+        <ul id="myCourse">
+
+        </ul>
+    </div>
+</div>
+
+<script>
+    $(function(){
+        $("#check").keyup(function(event){
+            console.log(event.keyCode );
+            var userid=$("#check").val();
+            if ( event.keyCode === 13){
+                $("#check").fadeOut();
+                $.ajax({
+                    url:"index.php?g=Restful&m=vip&a=jsrecordByToDay&userid="+userid,
+                    success:function (res) {
+                        for(var i=0;i<res.data.length;i++){
+                            $("#myCourse").append("<li>"+res.data[i].cname+" <button class='btn btn-success'>签到</button></li>")
+                        }
+                    }
+                });
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

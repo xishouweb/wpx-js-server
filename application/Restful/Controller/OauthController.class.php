@@ -303,7 +303,7 @@ class OauthController extends Controller
            "url":"http://gm.wujiesheying.com:8080/vip",  
            "miniprogram":{
              "appid":"wx1d82d29572bf34e8",
-             "pagepath":"pages/main/index?cid=' . $courseId . '@' . $userId . '"
+             "pagepath":"pages/main/index?cid=' . $userId . '"
            },      
            "data":{
             "first": {

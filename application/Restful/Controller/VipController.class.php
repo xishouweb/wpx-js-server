@@ -48,6 +48,13 @@ class VipController extends AdminbaseController
         $this->ajaxReturn(array("data" => $jsr), "JSON");
     }
 
+    //今天的课程
+    public function jsrecordByToDay($userid)
+    {
+        $courses = $this->user_course_model->join('jmqjcourse ON jmqjcourse.id = jmqjuser_card_course.courseid')->order("jmqjcourse.cday DESC")->where(array("jmqjuser_card_course.userid" => $userid,"jmqjcourse.cday"=>date("Y-m-d")))->select();
+        $this->ajaxReturn(array("data" => $courses), "JSON");
+    }
+
     private function jsRecords($userId)
     {
         $courses = $this->user_course_model->join('jmqjcourse ON jmqjcourse.id = jmqjuser_card_course.courseid')->order("jmqjcourse.cday DESC")->where(array("jmqjuser_card_course.userid" => $userId))->select();
