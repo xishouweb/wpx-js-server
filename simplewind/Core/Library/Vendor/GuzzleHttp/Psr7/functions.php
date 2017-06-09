@@ -10,7 +10,7 @@ use Psr\Http\Message\UriInterface;
 /**
  * Returns the string representation of an HTTP message.
  *
- * @param MessageInterface $message Message to convert to a string.
+ * @param MessageInterface $message MobileCodeDayu to convert to a string.
  *
  * @return string
  */
@@ -41,7 +41,7 @@ function str(MessageInterface $message)
 /**
  * Returns a UriInterface for the given value.
  *
- * This function accepts a string or {@see Psr\Http\Message\UriInterface} and
+ * This function accepts a string or {@see Psr\Http\MobileCodeDayu\UriInterface} and
  * returns a UriInterface for the given value. If the value is already a
  * `UriInterface`, it is returned as-is.
  *
@@ -243,7 +243,7 @@ function modify_request(RequestInterface $request, array $changes)
  * The body of the message will only be rewound if a call to `tell()` returns a
  * value other than `0`.
  *
- * @param MessageInterface $message Message to rewind
+ * @param MessageInterface $message MobileCodeDayu to rewind
  *
  * @throws \RuntimeException
  */

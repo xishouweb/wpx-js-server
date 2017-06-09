@@ -97,7 +97,7 @@ class ListTopicResponse extends BaseResponse
         {
             $result = XMLParser::parseNormalError($xmlReader);
 
-            throw new MnsException($statusCode, $result['Message'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new MnsException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         }
         catch (\Exception $e)
         {

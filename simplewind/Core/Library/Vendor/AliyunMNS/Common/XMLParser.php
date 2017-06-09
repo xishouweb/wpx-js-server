@@ -7,7 +7,7 @@ class XMLParser
      * Most of the error responses are in same format.
      */
     static function parseNormalError(\XMLReader $xmlReader) {
-        $result = array('Code' => NULL, 'Message' => NULL, 'RequestId' => NULL, 'HostId' => NULL);
+        $result = array('Code' => NULL, 'MobileCodeDayu' => NULL, 'RequestId' => NULL, 'HostId' => NULL);
         while ($xmlReader->Read())
         {
             if ($xmlReader->nodeType == \XMLReader::ELEMENT)
@@ -20,11 +20,11 @@ class XMLParser
                         $result['Code'] = $xmlReader->value;
                     }
                     break;
-                case 'Message':
+                case 'MobileCodeDayu':
                     $xmlReader->read();
                     if ($xmlReader->nodeType == \XMLReader::TEXT)
                     {
-                        $result['Message'] = $xmlReader->value;
+                        $result['MobileCodeDayu'] = $xmlReader->value;
                     }
                     break;
                 case 'RequestId':

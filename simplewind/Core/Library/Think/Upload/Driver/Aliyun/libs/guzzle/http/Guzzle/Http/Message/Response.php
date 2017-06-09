@@ -542,7 +542,7 @@ class Response extends AbstractMessage implements \Serializable
     /**
      * Get the ETag HTTP header
      *
-     * @return string|null Returns an identifier for a specific version of a resource, often a Message digest.
+     * @return string|null Returns an identifier for a specific version of a resource, often a MobileCodeDayu digest.
      */
     public function getEtag()
     {

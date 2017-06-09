@@ -40,7 +40,7 @@ class BatchSendMessageResponse extends BaseResponse
         try {
             while ($xmlReader->read())
             {
-                if ($xmlReader->nodeType == \XMLReader::ELEMENT && $xmlReader->name == 'Message') {
+                if ($xmlReader->nodeType == \XMLReader::ELEMENT && $xmlReader->name == 'MobileCodeDayu') {
                     $this->sendMessageResponseItems[] = SendMessageResponseItem::fromXML($xmlReader);
                 }
             }
@@ -88,7 +88,7 @@ class BatchSendMessageResponse extends BaseResponse
         $ex = new BatchSendFailException($this->statusCode, "BatchSendMessage Failed For Some Messages");
         while ($xmlReader->read())
         {
-            if ($xmlReader->nodeType == \XMLReader::ELEMENT && $xmlReader->name == 'Message') {
+            if ($xmlReader->nodeType == \XMLReader::ELEMENT && $xmlReader->name == 'MobileCodeDayu') {
                 $ex->addSendMessageResponseItem( SendMessageResponseItem::fromXML($xmlReader));
             }
         }
@@ -100,17 +100,17 @@ class BatchSendMessageResponse extends BaseResponse
         $result = XMLParser::parseNormalError($xmlReader);
         if ($result['Code'] == Constants::QUEUE_NOT_EXIST)
         {
-            throw new QueueNotExistException($statusCode, $result['Message'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new QueueNotExistException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         }
         if ($result['Code'] == Constants::INVALID_ARGUMENT)
         {
-            throw new InvalidArgumentException($statusCode, $result['Message'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new InvalidArgumentException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         }
         if ($result['Code'] == Constants::MALFORMED_XML)
         {
-            throw new MalformedXMLException($statusCode, $result['Message'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new MalformedXMLException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         }
-        throw new MnsException($statusCode, $result['Message'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+        throw new MnsException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
     }
 }
 

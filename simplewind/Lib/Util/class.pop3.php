@@ -214,7 +214,7 @@ class POP3 {
     $this->pop_conn = fsockopen($host,    //  POP3 Host
                   $port,    //  Port #
                   $errno,   //  Error Number
-                  $errstr,  //  Error Message
+                  $errstr,  //  Error MobileCodeDayu
                   $tval);   //  Timeout (seconds)
 
     //  Restore the error handler

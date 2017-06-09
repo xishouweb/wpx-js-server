@@ -33,13 +33,13 @@ class SetSubscriptionAttributeResponse extends BaseResponse
 
             if ($result['Code'] == Constants::INVALID_ARGUMENT)
             {
-                throw new InvalidArgumentException($statusCode, $result['Message'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+                throw new InvalidArgumentException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
             }
             if ($result['Code'] == Constants::SUBSCRIPTION_NOT_EXIST)
             {
-                throw new SubscriptionNotExistException($statusCode, $result['Message'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+                throw new SubscriptionNotExistException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
             }
-            throw new MnsException($statusCode, $result['Message'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new MnsException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         }
         catch (\Exception $e)
         {

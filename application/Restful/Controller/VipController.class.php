@@ -15,7 +15,6 @@ use Common\Lib\WxPay\Notify_pub;
 use Restful\Controller\OauthController;
 
 
-
 class VipController extends AdminbaseController
 {
 
@@ -51,13 +50,14 @@ class VipController extends AdminbaseController
     //今天的课程
     public function jsrecordByToDay($userid)
     {
-        $courses = $this->user_course_model->join('jmqjcourse ON jmqjcourse.id = jmqjuser_card_course.courseid')->order("jmqjcourse.cday DESC")->where(array("jmqjuser_card_course.userid" => $userid,"jmqjcourse.cday"=>date("Y-m-d")))->select();
+        $courses = $this->user_course_model->join('jmqjcourse ON jmqjcourse.id = jmqjuser_card_course.courseid')->order("jmqjcourse.cday DESC")->where(array("jmqjuser_card_course.userid" => $userid, "jmqjcourse.cday" => date("Y-m-d")))->field('jmqjuser_card_course.id id,jmqjcourse.cname cname,jmqjcourse.cstime cstime,jmqjcourse.cetime cetime,jmqjuser_card_course.ischeck ischeck,jmqjuser_card_course.check_time check_time')->select();
         $this->ajaxReturn(array("data" => $courses), "JSON");
     }
 
     private function jsRecords($userId)
     {
         $courses = $this->user_course_model->join('jmqjcourse ON jmqjcourse.id = jmqjuser_card_course.courseid')->order("jmqjcourse.cday DESC")->where(array("jmqjuser_card_course.userid" => $userId))->select();
+        $uts = D("user_teacher")->where(array("userid" => $userId))->select();
         $newCourses = array();
         foreach ($courses as $cs) {
             $c = D("course")->find($cs['courseid']);
@@ -72,6 +72,7 @@ class VipController extends AdminbaseController
             }
             if ($cTime > $endTime || $cTime == $endTime) {
                 $c['state'] = 2;//结束了
+                continue;
             }
             $c['cstime'] = date('H:i', strtotime($c['cstime']));
             $c['cetime'] = date('H:i', strtotime($c['cetime']));
@@ -80,7 +81,42 @@ class VipController extends AdminbaseController
             $c["icon"] = $teacher["headimg"];
             array_push($newCourses, $c);
         }
-
+//        foreach ($uts as $ut) {
+//            $u = array();
+//            $teacher = D("teacher")->find($ut['teacherid']);
+//            $u['icon'] = $teacher['headimg'];
+//            $u['teacher'] = $teacher['tname'];
+//            $u['cday'] = date("Y-m-d", strtotime($ut['cdate']));
+//            $u['cname'] = $teacher['tname'] . "的私教课";
+//
+//            $time = D("time")->find($ut["timeid"]);
+//            $startTime = strtotime($ut['date'] . " " . $time['stime']);
+//            $endTime = strtotime($ut['date'] . " " . $time['etime']);
+//            $cTime = time();
+//            $u['cstime'] = date('H:i', $startTime);
+//            $u['cetime'] = date('H:i', $endTime);
+//            if ($cTime < $startTime || $cTime == $startTime) {
+//                $u['state'] = 0;// 未开始
+//            }
+//            if ($cTime < $endTime && $cTime > $startTime) {
+//                $u['state'] = 1;//进行中
+//            }
+//            if ($cTime > $endTime || $cTime == $endTime) {
+//                $u['state'] = 2;//结束了
+//                continue;
+//            }
+//            $u['id'] = $ut['id'];
+//            array_push($newCourses, $u);
+//        }
+//        $aaa = array();
+//        for ($i = 0; $i < count($newCourses); $i++) {
+//            $aaa[$newCourses[$i]['cday'] . " " . $newCourses[$i]['cstime']] = $i;
+//        }
+//        krsort($aaa);
+//        $nn = array();
+//        foreach ($aaa as $k => $v) {
+//            array_push($nn, $newCourses[$v]);
+//        }
         return $newCourses;
     }
 
@@ -91,8 +127,8 @@ class VipController extends AdminbaseController
         $courseTypes = D("course_type")->where("state=1")->select();
 
         foreach ($courseTypes as $courseType) {
-            $cardsT = D("card")->where(array("ctype" => 1, "cftype" => $courseType["id"],"state"=>1))->select();
-            $cardsM = D("card")->where(array("ctype" => 0, "cftype" => $courseType["id"],"state"=>1))->select();
+            $cardsT = D("card")->where(array("ctype" => 1, "cftype" => $courseType["id"], "state" => 1))->select();
+            $cardsM = D("card")->where(array("ctype" => 0, "cftype" => $courseType["id"], "state" => 1))->select();
             if ($cardsT) {
                 array_push($cardsTimes, array($courseType["tname"] => $cardsT));
             }
@@ -216,8 +252,8 @@ class VipController extends AdminbaseController
             D("oauth_user")->where(array("openid" => $openid))->save(array("sum_fee" => $sum_fee));
             //用户消费记录 卡关联
             D("user_card")->add(array("openid" => $openid, "cashfee" => $cashFee, "transactionid" => $transactionId, "cardid" => $cardId, "buy_time" => date('Y-m-d H:m:s'), 'use_number' => $card['ctimes'], 'expire_time' => $expire));
-            $oc=new OauthController();
-            $oc->sendTemMsgForWxPay($openid,$cardId);
+            $oc = new OauthController();
+            $oc->sendTemMsgForWxPay($openid, $cardId);
         }
         $returnXml = $notify->returnXml();
         echo $returnXml;
@@ -293,29 +329,6 @@ class VipController extends AdminbaseController
         }
     }
 
-    public function cancelOrderCourse($userId, $courseId)
-    {
-        $ucc = D("user_card_course")->where(array("userid" => $userId, "courseid" => $courseId))->find();
-        $u = D("oauth_user")->find($userId);
-        $uc = D("user_card")->where(array("cardid" => $ucc["cardid"], "openid" => $u["openid"]))->find();
-        $c = D("course")->find($courseId);
-        if ($ucc && $u && $c && $uc) {
-            //月卡0:不减1 ,次卡1 :减1
-            if (intval($uc["use_number"]) != -1) {
-                $number = intval($uc["use_number"]) + 1;//当前次数
-                D("user_card")->where(array('id' => $uc['id']))->save(array("use_number" => $number));
-            }
-            $ccpeople = $c["ccpeople"] - 1;
-            D("course")->where(array("id" => $c["id"]))->save(array("ccpeople" => $ccpeople));
-            //删除user_course
-            D("user_card_course")->delete($ucc["id"]);
-            $jsr = $this->jsRecords($userId);
-            $this->ajaxReturn(array("status" => true, "msg" => "取消成功", "data" => $jsr), "JSON");
-        } else {
-            $this->ajaxReturn(array("status" => false, "msg" => "非法ID"), "JSON");
-        }
 
-
-    }
 
 }

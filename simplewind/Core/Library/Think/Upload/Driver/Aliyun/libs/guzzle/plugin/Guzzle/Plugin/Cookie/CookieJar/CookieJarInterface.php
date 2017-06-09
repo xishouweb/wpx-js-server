@@ -54,7 +54,7 @@ interface CookieJarInterface extends \Countable, \IteratorAggregate
     public function add(Cookie $cookie);
 
     /**
-     * Add cookies from a {@see Guzzle\Http\Message\Response} object
+     * Add cookies from a {@see Guzzle\Http\MobileCodeDayu\Response} object
      *
      * @param Response         $response Response object
      * @param RequestInterface $request  Request that received the response

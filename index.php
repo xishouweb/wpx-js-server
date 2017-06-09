@@ -63,8 +63,6 @@ $allow_origin = array(
     'http://gm.wujiesheying.com:8080',
     'http://gm.wujiesheying.com:8000',
     'http://www.gm-fitness.com:8080',
-
-
     'http://localhost:3000'
 );
 

@@ -1164,7 +1164,7 @@ class FirePHP {
                 }
                    
                 $Object = array('Class'=>get_class($Object),
-                                'Message'=>$severity.': '.$Object->getMessage(),
+                                'MobileCodeDayu'=>$severity.': '.$Object->getMessage(),
                                 'File'=>$this->_escapeTraceFile($Object->getFile()),
                                 'Line'=>$Object->getLine(),
                                 'Type'=>'trigger',
@@ -1172,7 +1172,7 @@ class FirePHP {
                 $skipFinalObjectEncode = true;
             } else {
                 $Object = array('Class'=>get_class($Object),
-                                'Message'=>$Object->getMessage(),
+                                'MobileCodeDayu'=>$Object->getMessage(),
                                 'File'=>$this->_escapeTraceFile($Object->getFile()),
                                 'Line'=>$Object->getLine(),
                                 'Type'=>'throw',
@@ -1209,7 +1209,7 @@ class FirePHP {
                     $Object = array('Class'=>isset($trace[$i]['class'])?$trace[$i]['class']:'',
                                     'Type'=>isset($trace[$i]['type'])?$trace[$i]['type']:'',
                                     'Function'=>isset($trace[$i]['function'])?$trace[$i]['function']:'',
-                                    'Message'=>$trace[$i]['args'][0],
+                                    'MobileCodeDayu'=>$trace[$i]['args'][0],
                                     'File'=>isset($trace[$i]['file'])?$this->_escapeTraceFile($trace[$i]['file']):'',
                                     'Line'=>isset($trace[$i]['line'])?$trace[$i]['line']:'',
                                     'Args'=>isset($trace[$i]['args'])?$this->encodeObject($trace[$i]['args']):'',
@@ -1317,7 +1317,7 @@ class FirePHP {
             if ($part) {
                 
                 if (count($parts)>2) {
-                    // Message needs to be split into multiple parts
+                    // MobileCodeDayu needs to be split into multiple parts
                     $this->setHeader('X-Wf-1-'.$structure_index.'-'.'1-'.$this->messageIndex,
                                      (($i==0)?strlen($msg):'')
                                      . '|' . $part . '|'

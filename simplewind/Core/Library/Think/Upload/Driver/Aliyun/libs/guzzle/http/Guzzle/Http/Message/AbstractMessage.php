@@ -23,7 +23,7 @@ abstract class AbstractMessage implements MessageInterface
     /** @var Collection Custom message parameters that are extendable by plugins */
     protected $params;
 
-    /** @var string Message protocol */
+    /** @var string MobileCodeDayu protocol */
     protected $protocol = 'HTTP';
 
     /** @var string HTTP protocol version of the message */

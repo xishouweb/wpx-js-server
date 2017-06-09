@@ -60,7 +60,7 @@ class MessageParser extends AbstractMessageParser
     /**
      * Parse a message into parts
      *
-     * @param string $message Message to parse
+     * @param string $message MobileCodeDayu to parse
      *
      * @return array
      */

@@ -169,7 +169,7 @@ class PHPMailer {
   public $ConfirmReadingTo  = '';
 
   /**
-   * Sets the hostname to use in Message-Id and Received headers
+   * Sets the hostname to use in MobileCodeDayu-Id and Received headers
    * and as default HELO string. If empty, the value returned
    * by SERVER_NAME is used or 'localhost.localdomain'.
    * @var string
@@ -177,7 +177,7 @@ class PHPMailer {
   public $Hostname          = '';
 
   /**
-   * Sets the message ID to be used in the Message-Id header.
+   * Sets the message ID to be used in the MobileCodeDayu-Id header.
    * If empty, a unique id will be generated.
    * @var string
    */
@@ -958,7 +958,7 @@ class PHPMailer {
       'encoding' => 'Unknown encoding: ',
       'signing' => 'Signing Error: ',
       'smtp_error' => 'SMTP server error: ',
-      'empty_message' => 'Message body empty',
+      'empty_message' => 'MobileCodeDayu body empty',
       'invalid_address' => 'Invalid address',
       'variable_set' => 'Cannot set or reset variable: '
     );
@@ -1222,9 +1222,9 @@ class PHPMailer {
     }
 
     if($this->MessageID != '') {
-      $result .= $this->HeaderLine('Message-ID', $this->MessageID);
+      $result .= $this->HeaderLine('MobileCodeDayu-ID', $this->MessageID);
     } else {
-      $result .= sprintf("Message-ID: <%s@%s>%s", $uniq_id, $this->ServerHostname(), $this->LE);
+      $result .= sprintf("MobileCodeDayu-ID: <%s@%s>%s", $uniq_id, $this->ServerHostname(), $this->LE);
     }
     $result .= $this->HeaderLine('X-Priority', $this->Priority);
     if($this->XMailer) {
@@ -2458,7 +2458,7 @@ class PHPMailer {
    * Generate DKIM Canonicalization Body
    *
    * @access public
-   * @param string $body Message Body
+   * @param string $body MobileCodeDayu Body
    */
   public function DKIM_BodyC($body) {
     if ($body == '') return "\r\n";

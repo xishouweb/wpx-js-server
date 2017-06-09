@@ -90,7 +90,7 @@ class SendMessageResponseItem
                 }
                 break;
             case \XMLReader::END_ELEMENT:
-                if ($xmlReader->name == 'Message')
+                if ($xmlReader->name == 'MobileCodeDayu')
                 {
                     if ($messageId != NULL)
                     {

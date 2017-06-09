@@ -188,3 +188,8 @@ h1 a {
 		transform: scale(1);
 	}
 }
+
+.alert{
+	background-color: #ffffff;
+	border:solid #2f8912 1px;
+}

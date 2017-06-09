@@ -18,7 +18,7 @@ class SendMessageRequestItem
 
     public function writeXML(\XMLWriter $xmlWriter, $base64)
     {
-        $xmlWriter->startELement('Message');
+        $xmlWriter->startELement('MobileCodeDayu');
         $this->writeMessagePropertiesForSendXML($xmlWriter, $base64);
         $xmlWriter->endElement();
     }

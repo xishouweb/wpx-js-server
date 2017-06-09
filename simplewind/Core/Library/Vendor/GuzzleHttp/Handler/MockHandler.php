@@ -39,7 +39,7 @@ class MockHandler implements \Countable
 
     /**
      * The passed in value must be an array of
-     * {@see Psr7\Http\Message\ResponseInterface} objects, Exceptions,
+     * {@see Psr7\Http\MobileCodeDayu\ResponseInterface} objects, Exceptions,
      * callables, or Promises.
      *
      * @param array $queue

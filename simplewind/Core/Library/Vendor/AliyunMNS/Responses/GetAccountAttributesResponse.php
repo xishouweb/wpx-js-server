@@ -50,7 +50,7 @@ class GetAccountAttributesResponse extends BaseResponse
         try {
             $result = XMLParser::parseNormalError($xmlReader);
 
-            throw new MnsException($statusCode, $result['Message'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new MnsException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         } catch (\Exception $e) {
             if ($exception != NULL) {
                 throw $exception;

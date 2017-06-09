@@ -13,33 +13,116 @@
 </head>
 <body>
 <div class="wrap">
-    <input id="check" autofocus="autofocus" class="input" style="height: 100px;width: 90%;border: solid #ff8d44 2px;border-radius: 20px;font-size: 30px">
+    <div class="alert alert-warning">
+        本页面用于用户签到，用户出示课程二维码，放置在扫码台上方，扫码内容自动填写到用户ID上，
+        请一定保持光标在下面的输入框里。
+    </div>
+    <div id="checkDiv">
+        <label>用户ID</label>
+        <input id="check" autofocus="autofocus" class="input"
+               style="height: 80px;width: 90%;border: solid #ff8d44 2px;border-radius: 20px;font-size: 30px;padding-left: 30px">
+    </div>
 
-    <div>
+    <div id="today" style="display: none">
         <h3>该用户今天的课程</h3>
-        <ul id="myCourse">
-
-        </ul>
+        <table id="myCourse" class="table table-hover table-bordered table-list">
+            <thead>
+            <th>
+                课程名
+            </th>
+            <th>
+                上课时间
+            </th>
+            <th>
+                签到
+            </th>
+            </thead>
+        </table>
+    </div>
+    <hr>
+    <div>
+        <h3>签到记录</h3>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <th>
+                课程名
+            </th>
+            <th>
+                用户
+            </th>
+            <th>
+                真实姓名
+            </th>
+            <th>
+                签到时间
+            </th>
+            </thead>
+            <foreach name="checkRe" item="checkR" key="i">
+                <tr>
+                    <td>
+                        {$checkR.cname}
+                    </td>
+                    <td>
+                        {$checkR.username}
+                    </td>
+                    <td>
+                        {$checkR.truename}
+                    </td>
+                    <td>
+                        {$checkR.check_time}
+                    </td>
+                </tr>
+            </foreach>
+        </table>
     </div>
 </div>
 
 <script>
-    $(function(){
-        $("#check").keyup(function(event){
-            console.log(event.keyCode );
-            var userid=$("#check").val();
-            if ( event.keyCode === 13){
-                $("#check").fadeOut();
-                $.ajax({
-                    url:"index.php?g=Restful&m=vip&a=jsrecordByToDay&userid="+userid,
-                    success:function (res) {
-                        for(var i=0;i<res.data.length;i++){
-                            $("#myCourse").append("<li>"+res.data[i].cname+" <button class='btn btn-success'>签到</button></li>")
+    var userid;
+    function courses() {
+        $("#myCourse").html("");
+        $.ajax({
+            url: "index.php?g=Restful&m=vip&a=jsrecordByToDay&userid=" + userid,
+            success: function (res) {
+                if (res.data && res.data.length) {
+                    for (var i = 0; i < res.data.length; i++) {
+                        var $tr = "<tr><td>" + res.data[i].cname + " </td><td>" + res.data[i].cstime + "--" + res.data[i].cetime + "</td><td>";
+                        if (res.data[i].ischeck == 0) {
+                            $tr = $tr + "<button class='btn btn-success' onclick='checkCourse(\"" + res.data[i].id + "\")'>签到</button>";
+                        } else {
+                            $tr = $tr + "已经签过了";
                         }
+                        $tr = $tr + "</td></tr>";
+                        $("#myCourse").append($tr);
                     }
-                });
+                } else {
+                    $("#myCourse").append("<div class='alert success'>您今天没有课！！！</div>");
+                }
+                $("#checkDiv").fadeOut();
+                $("#today").fadeIn();
             }
         });
+    }
+    function checkCourse(courseid) {
+        $.ajax({
+            url: "index.php?g=admin&m=main&a=checkIn&id=" + courseid,
+            success: function (data) {
+                if(data.status==1){
+                    courses();
+                }else{
+                    alert("签到失败");
+                }
+            }
+        })
+    }
+    $(function () {
+        $("#check").keyup(function (event) {
+            userid = $("#check").val();
+            if (event.keyCode === 13) {
+                courses();
+            }
+        });
+
 
     });
 </script>

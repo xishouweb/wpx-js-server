@@ -32,7 +32,7 @@ final class StaticClient
     /**
      * @param  string $method  HTTP request method (GET, POST, HEAD, DELETE, PUT, etc)
      * @param  string $url     URL of the request
-     * @param  array  $options Options to use with the request. See: Guzzle\Http\Message\RequestFactory::applyOptions()
+     * @param  array  $options Options to use with the request. See: Guzzle\Http\MobileCodeDayu\RequestFactory::applyOptions()
      * @return \Guzzle\Http\Message\Response|\Guzzle\Stream\Stream
      */
     public static function request($method, $url, $options = array())

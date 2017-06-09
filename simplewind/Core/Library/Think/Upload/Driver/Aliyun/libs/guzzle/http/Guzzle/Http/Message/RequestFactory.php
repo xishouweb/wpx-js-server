@@ -129,7 +129,7 @@ class RequestFactory implements RequestFactoryInterface
 
     /**
      * Clone a request while changing the method. Emulates the behavior of
-     * {@see Guzzle\Http\Message\Request::clone}, but can change the HTTP method.
+     * {@see Guzzle\Http\MobileCodeDayu\Request::clone}, but can change the HTTP method.
      *
      * @param RequestInterface $request Request to clone
      * @param string           $method  Method to set

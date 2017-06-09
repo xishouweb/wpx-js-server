@@ -43,6 +43,20 @@ class MainController extends AdminbaseController
 
     public function check()
     {
+        $checkRe=D("user_card_course")->join('jmqjcourse ON jmqjcourse.id = jmqjuser_card_course.courseid')
+            ->join('jmqjoauth_user ON jmqjoauth_user.id = jmqjuser_card_course.userid')->order("jmqjcourse.cday DESC")->where(array("jmqjuser_card_course.ischeck" => 1))->field('jmqjuser_card_course.id id,jmqjcourse.cname cname,jmqjcourse.cstime cstime,jmqjcourse.cetime cetime,jmqjuser_card_course.ischeck ischeck,jmqjuser_card_course.check_time check_time,jmqjoauth_user.name username,jmqjoauth_user.true_name truename')->select();
+        $this->assign('checkRe', $checkRe);
         $this->display();
+    }
+
+    public function checkIn($id)
+    {
+        $userCourse = D("user_card_course")->find($id);
+        if ($userCourse) {
+            D("user_card_course")->where("id=" . $id)->save(array("ischeck" => 1, "check_time" => date("Y-m-d H:i:s")));
+            $this->success("签到成功！");
+        } else {
+            $this->error("非法请求");
+        }
     }
 }

@@ -136,6 +136,7 @@ class CourseController extends AdminbaseController
         $this->ajaxReturn(array("data" => $cards), "JSON");
     }
 
+    //用卡买课
     public function cardBuyCourse($userId, $courseId, $cardId)
     {
         $user = D("oauth_user")->find($userId);
@@ -163,8 +164,10 @@ class CourseController extends AdminbaseController
             $number = intval($ucs["use_number"]) - 1;//当前次数
             D("user_card")->where(array('openid' => $user['openid'], "cardid" => $cardId))->save(array("use_number" => $number));
         }
+        //记录教练被占用事件
+        $utid=D("user_teacher")->add(array("userid"=>$userId,"teacherid"=>$course['teacher'],"timeid"=>$course['timeid'],"create_time"=>date("Y-m-d H:i:s"),"cardid"=>$cardId,"cdate"=>$course['cday']));
         //用卡买课程
-        D("user_card_course")->add(array("userid" => $userId, "cardid" => $cardId, "courseid" => $courseId, "create_time" => date("Y-m-d H:i:s")));
+        D("user_card_course")->add(array("userid" => $userId, "cardid" => $cardId, "courseid" => $courseId, "create_time" => date("Y-m-d H:i:s"),"user_teacher_id"=>$utid));
         //用卡买课程的记录
         D("user_card_course_record")->add(array("userid" => $userId, "cardid" => $cardId, "courseid" => $courseId, "create_time" => date("Y-m-d H:i:s")));
         $allCourse = $this->courseList($course["cday"], $userId);

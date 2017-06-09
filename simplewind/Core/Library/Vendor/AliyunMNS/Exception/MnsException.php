@@ -30,7 +30,7 @@ class MnsException extends \RuntimeException
 
     public function __toString()
     {
-        $str = "Code: " . $this->getCode() . " Message: " . $this->getMessage();
+        $str = "Code: " . $this->getCode() . " MobileCodeDayu: " . $this->getMessage();
         if ($this->mnsErrorCode != NULL)
         {
             $str .= " MnsErrorCode: " . $this->mnsErrorCode;

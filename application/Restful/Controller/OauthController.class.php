@@ -276,6 +276,174 @@ class OauthController extends Controller
         }
     }
 
+    private function times($teacherid, $day)
+    {
+        $times = D("time")->order("stime asc")->select();
+        $newTimes = array();
+        foreach ($times as $time) {
+            $ut = D("user_teacher")->where(array("teacherid" => $teacherid, "timeid" => $time['id'], "cdate" => $day))->select();
+            $state = false;
+            if (!empty($ut)) {
+                $state = true;
+            }
+            $ntime = array("state" => $state, "id" => $time['id'], "etime" => date("H:i", strtotime($time['etime'])), "stime" => date("H:i", strtotime($time['stime'])));
+            array_push($newTimes, $ntime);
+        }
+        return $newTimes;
+    }
+
+    //约私教
+    public function orderTeacher($userid, $teacherid, $date, $timeid, $cardid)
+    {
+        $ut = D("user_card_course")->where(array("userid" => $userid, "cdate" => $date, "timeid" => $timeid))->select();
+        if ($ut) {
+            $this->ajaxReturn(array("status" => false, 'msg' => '你的时间只有一份，可是想约了两个教练？！'), "JSON");
+            return;
+        }
+        $user = D("oauth_user")->find($userid);
+        $card = D("card")->find($cardid);
+        $teahcer = D("teacher")->find($teacherid);
+        $time = D("time")->find($timeid);
+        $ucs = D("user_card")->where(array('openid' => $user['openid'], "cardid" => $cardid))->find();
+        if ($user && $card && $teahcer && $time && $ucs) {
+            //添加用户约哪个教练
+            $utid = D("user_card_course")->add(array("userid" => $userid, "teacherid" => $teacherid, "cdate" => $date, "timeid" => $timeid, "cardid" => $cardid, "create_time" => date("Y-m-d H:i:s")));
+            //去除卡的次数
+            //月卡0:不减1 ,次卡1 :减1
+            if (intval($card["ctype"]) == 1 && intval($ucs["use_number"]) != 0) {
+                $number = intval($ucs["use_number"]) - 1;//当前次数
+                D("user_card")->where(array('openid' => $user['openid'], "cardid" => $cardid))->save(array("use_number" => $number));
+            }
+            $ucid = $ucs['id'];
+            $times = $this->times($teacherid, $date);
+            $this->sendMsg($user['openid'], "预约私教成功！\n您预约了" . $teahcer['sign'] . " " . $teahcer['tname'] . "的私教\n时间：" . $date . "\n" . date("H:i", strtotime($time['stime'])) . "到" . date("H:i", strtotime($time['etime'])) . "\n取消预约点击 <a href='http://www.gm-fitness.com:8080/vip'>残忍取消</a> 到健身记录中取消");
+            $this->ajaxReturn(array("times" => $times, "status" => true, 'msg' => '预约成功啦'), "JSON");
+        } else {
+            $this->ajaxReturn(array("status" => false, 'msg' => '非法ID'), "JSON");
+        }
+    }
+
+    private function jsRecords($userId)
+    {
+        $courses =D("user_card_course")->join('jmqjcourse ON jmqjcourse.id = jmqjuser_card_course.courseid')->order("jmqjcourse.cday DESC")->where(array("jmqjuser_card_course.userid" => $userId))->select();
+        $uts = D("user_teacher")->where(array("userid" => $userId))->select();
+        $newCourses = array();
+        foreach ($courses as $cs) {
+            $c = D("course")->find($cs['courseid']);
+            $startTime = strtotime($c['cday'] . " " . $c['cstime']);
+            $endTime = strtotime($c['cday'] . " " . $c['cetime']);
+            $cTime = time();
+            if ($cTime < $startTime || $cTime == $startTime) {
+                $c['state'] = 0;// 未开始
+            }
+            if ($cTime < $endTime && $cTime > $startTime) {
+                $c['state'] = 1;//进行中
+            }
+            if ($cTime > $endTime || $cTime == $endTime) {
+                $c['state'] = 2;//结束了
+                continue;
+            }
+            $c['cstime'] = date('H:i', strtotime($c['cstime']));
+            $c['cetime'] = date('H:i', strtotime($c['cetime']));
+            $teacher = D('teacher')->where(array("id" => $c["teacher"]))->find();
+            $c["teacher"] = $teacher["tname"];
+            $c["icon"] = $teacher["headimg"];
+            array_push($newCourses, $c);
+        }
+//        foreach ($uts as $ut) {
+//            $u = array();
+//            $teacher = D("teacher")->find($ut['teacherid']);
+//            $u['icon'] = $teacher['headimg'];
+//            $u['teacher'] = $teacher['tname'];
+//            $u['cday'] = date("Y-m-d", strtotime($ut['cdate']));
+//            $u['cname'] = $teacher['tname'] . "的私教课";
+//
+//            $time = D("time")->find($ut["timeid"]);
+//            $startTime = strtotime($ut['date'] . " " . $time['stime']);
+//            $endTime = strtotime($ut['date'] . " " . $time['etime']);
+//            $cTime = time();
+//            $u['cstime'] = date('H:i', $startTime);
+//            $u['cetime'] = date('H:i', $endTime);
+//            if ($cTime < $startTime || $cTime == $startTime) {
+//                $u['state'] = 0;// 未开始
+//            }
+//            if ($cTime < $endTime && $cTime > $startTime) {
+//                $u['state'] = 1;//进行中
+//            }
+//            if ($cTime > $endTime || $cTime == $endTime) {
+//                $u['state'] = 2;//结束了
+//                continue;
+//            }
+//            $u['id'] = $ut['id'];
+//            array_push($newCourses, $u);
+//        }
+//        $aaa = array();
+//        for ($i = 0; $i < count($newCourses); $i++) {
+//            $aaa[$newCourses[$i]['cday'] . " " . $newCourses[$i]['cstime']] = $i;
+//        }
+//        krsort($aaa);
+//        $nn = array();
+//        foreach ($aaa as $k => $v) {
+//            array_push($nn, $newCourses[$v]);
+//        }
+        return $newCourses;
+    }
+
+
+    public function cancelOrderCourse($userId, $courseId)
+    {
+
+
+        $ucc = D("user_card_course")->where(array("userid" => $userId, "courseid" => $courseId))->find();
+        $u = D("oauth_user")->find($userId);
+        $uc = D("user_card")->where(array("cardid" => $ucc["cardid"], "openid" => $u["openid"]))->find();
+        $c = D("course")->find($courseId);
+        if ($ucc && $u && $c && $uc) {
+            //月卡0:不减1 ,次卡1 :减1
+            if (intval($uc["use_number"]) != -1) {
+                $number = intval($uc["use_number"]) + 1;//当前次数
+                D("user_card")->where(array('id' => $uc['id']))->save(array("use_number" => $number));
+            }
+            $ccpeople = $c["ccpeople"] - 1;
+            D("course")->where(array("id" => $c["id"]))->save(array("ccpeople" => $ccpeople));
+            //删除user_course
+            D("user_card_course")->delete($ucc["id"]);
+            D("user_teacher")->delete($ucc["user_teacher_id"]);
+            $this->sendMsg($uc['openid'], "取消预约团课成功！");
+            $jsr = $this->jsRecords($userId);
+            $this->ajaxReturn(array("status" => true, "msg" => "取消成功", "data" => $jsr), "JSON");
+        } else {
+            if (empty($c)) {
+                $this->cancelOrderTeacher($courseId);
+            }
+            $this->ajaxReturn(array("status" => false, "msg" => "非法ID"), "JSON");
+        }
+
+
+    }
+
+    private function cancelOrderTeacher($utid)
+    {
+        $ut = D("user_teacher")->find(intval($utid));
+        if (empty($ut)) {
+            $this->ajaxReturn(array("status" => false, 'msg' => '没约过这个教练的时间啊'), "JSON");
+        } else {
+            $user = D("oauth_user")->find($ut['userid']);
+            $uc = D("user_card")->where(array('openid' => $user['openid'], "cardid" => $ut['cardid']))->find();
+            $card = D("card")->find($uc["cardid"]);
+            if (intval($card["ctype"]) == 1 && intval($uc["use_number"]) != 0) {
+                $number = intval($uc["use_number"]) + 1;//当前次数
+                D("user_card")->where(array("id" => $uc['id']))->save(array("use_number" => $number));
+            }
+            $this->sendMsg($uc['openid'], "取消预约私教成功！");
+            D("user_teacher")->delete($utid);
+            $jsr = $this->jsRecords($ut['userid']);
+            $this->ajaxReturn(array("status" => true, 'msg' => '取消预约私教成功','data'=>$jsr), "JSON");
+        }
+
+    }
+
+
     //发送客服消息
     private function sendMsg($openid, $text)
     {
@@ -290,7 +458,7 @@ class OauthController extends Controller
         }
     }';
         $result = $this->https_post($url, $data);
-        echo(json_encode($result));
+//        echo(json_encode($result));
     }
 
     public function sendTemMsgForClassReminder($openid, $courseId, $userId)

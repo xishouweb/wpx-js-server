@@ -66,8 +66,11 @@ class CourseController extends AdminbaseController
     {
         $teachers = $this->teacher_model->order("id ASC")->select();
         $ct = D("course_type")->order("id ASC")->select();
+        $time = D("time")->order("stime ASC")->select();
+
         $this->assign("types", $ct);
         $this->assign("teachers", $teachers);
+        $this->assign("times", $time);
         $this->display();
     }
 
@@ -75,14 +78,13 @@ class CourseController extends AdminbaseController
     public function add_course()
     {
         if (IS_POST) {
-            $cstime = $_POST['cstime'];
-            $cetime = $_POST['cetime'];
+            $timeid=$_POST['timeid'];
+            $time = D("time")->find($timeid);
+            $cstime = $time['stime'];
+            $cetime = $time['etime'];
             $cday = $_POST['cday'];
-            if (strtotime($_POST['cstime']) > strtotime($_POST['cetime']) || strtotime($_POST['cstime']) == strtotime($_POST['cetime'])) {
-                $this->error("结束时间应该大于开始时间");
-            }
             $id = "ce" . String::uuid();
-            $course = array("id" => $id, "ctype" => $_POST['ctype'], "cname" => $_POST['cname'], "cday" => $cday, "cpeople" => $_POST['cpeople'], "cdesc" => $_POST['cdesc'], "cstime" => $cstime, "cetime" => $cetime, "teacher" => $_POST['teacher'], "create_time" => date("Y-m-d H:i:s"));
+            $course = array("id" => $id, "ctype" => $_POST['ctype'], "cname" => $_POST['cname'], "cday" => $cday, "cpeople" => $_POST['cpeople'], "cdesc" => $_POST['cdesc'], "cstime" => $cstime, "cetime" => $cetime, "teacher" => $_POST['teacher'], "create_time" => date("Y-m-d H:i:s"),"timeid"=>$timeid);
             $this->course_model->add($course);
             $this->success("添加成功！", U("course/alllist"));
         } else {
@@ -93,14 +95,12 @@ class CourseController extends AdminbaseController
     public function edit_course()
     {
         if (IS_POST) {
-            $cstime = $_POST['cstime'];
-            $cetime = $_POST['cetime'];
+            $timeid=$_POST['timeid'];
+            $time = D("time")->find($timeid);
+            $cstime = $time['stime'];
+            $cetime = $time['etime'];
             $cday = $_POST['cday'];
-            if (strtotime($_POST['cstime']) > strtotime($_POST['cetime']) || strtotime($_POST['cstime']) == strtotime($_POST['cetime'])) {
-                $this->error("结束时间应该大于开始时间");
-            }
-            $id = "ce" . String::uuid();
-            $course = array("ctype" => $_POST['ctype'], "cname" => $_POST['cname'], "cday" => $cday, "cpeople" => $_POST['cpeople'], "cdesc" => $_POST['cdesc'], "cstime" => $cstime, "cetime" => $cetime, "teacher" => $_POST['teacher'], "create_time" => date("Y-m-d H:i:s"));
+            $course = array("ctype" => $_POST['ctype'], "cname" => $_POST['cname'], "cday" => $cday, "cpeople" => $_POST['cpeople'], "cdesc" => $_POST['cdesc'], "cstime" => $cstime, "cetime" => $cetime, "teacher" => $_POST['teacher'], "create_time" => date("Y-m-d H:i:s"),"timeid"=>$timeid);
             $this->course_model->where(array("id" => $_POST['id']))->save($course);
             $this->success("编辑成功！", U("course/alllist"));
         } else {
@@ -113,7 +113,9 @@ class CourseController extends AdminbaseController
         $course = D("course")->find($id);
         $types = D("course_type")->where("state=1")->select();
         $teachers = D("teacher")->select();
+        $time = D("time")->order("stime ASC")->select();
 
+        $this->assign("times", $time);
         $this->assign("course", $course);
         $this->assign("types", $types);
         $this->assign("teachers", $teachers);
@@ -158,13 +160,13 @@ class CourseController extends AdminbaseController
     public function edit_type()
     {
         if (IS_POST) {
-            if (strrpos($_POST["icon"], C("TMPL_PARSE_STRING.__UPLOAD__"))==0) {
+            if (strrpos($_POST["icon"], C("TMPL_PARSE_STRING.__UPLOAD__")) == 0) {
                 $icon = $_POST["icon"];
             } else {
                 $icon = C("TMPL_PARSE_STRING.__UPLOAD__") . $_POST["icon"];
             }
 
-            $re = D("course_type")->where(array("id" => $_POST["id"]))->save(array("tname" => $_POST["tname"], "tdesc" => $_POST["tdesc"], "tag" => $_POST["tag"], "icon" => $icon,"state"=>$_POST["state"]));
+            $re = D("course_type")->where(array("id" => $_POST["id"]))->save(array("tname" => $_POST["tname"], "tdesc" => $_POST["tdesc"], "tag" => $_POST["tag"], "icon" => $icon, "state" => $_POST["state"]));
             if ($re) {
                 $this->success("编辑成功！", U("course/type"));
             } else {
