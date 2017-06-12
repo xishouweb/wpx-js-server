@@ -54,71 +54,7 @@ class VipController extends AdminbaseController
         $this->ajaxReturn(array("data" => $courses), "JSON");
     }
 
-    private function jsRecords($userId)
-    {
-        $courses = $this->user_course_model->join('jmqjcourse ON jmqjcourse.id = jmqjuser_card_course.courseid')->order("jmqjcourse.cday DESC")->where(array("jmqjuser_card_course.userid" => $userId))->select();
-        $uts = D("user_teacher")->where(array("userid" => $userId))->select();
-        $newCourses = array();
-        foreach ($courses as $cs) {
-            $c = D("course")->find($cs['courseid']);
-            $startTime = strtotime($c['cday'] . " " . $c['cstime']);
-            $endTime = strtotime($c['cday'] . " " . $c['cetime']);
-            $cTime = time();
-            if ($cTime < $startTime || $cTime == $startTime) {
-                $c['state'] = 0;// 未开始
-            }
-            if ($cTime < $endTime && $cTime > $startTime) {
-                $c['state'] = 1;//进行中
-            }
-            if ($cTime > $endTime || $cTime == $endTime) {
-                $c['state'] = 2;//结束了
-                continue;
-            }
-            $c['cstime'] = date('H:i', strtotime($c['cstime']));
-            $c['cetime'] = date('H:i', strtotime($c['cetime']));
-            $teacher = D('teacher')->where(array("id" => $c["teacher"]))->find();
-            $c["teacher"] = $teacher["tname"];
-            $c["icon"] = $teacher["headimg"];
-            array_push($newCourses, $c);
-        }
-//        foreach ($uts as $ut) {
-//            $u = array();
-//            $teacher = D("teacher")->find($ut['teacherid']);
-//            $u['icon'] = $teacher['headimg'];
-//            $u['teacher'] = $teacher['tname'];
-//            $u['cday'] = date("Y-m-d", strtotime($ut['cdate']));
-//            $u['cname'] = $teacher['tname'] . "的私教课";
-//
-//            $time = D("time")->find($ut["timeid"]);
-//            $startTime = strtotime($ut['date'] . " " . $time['stime']);
-//            $endTime = strtotime($ut['date'] . " " . $time['etime']);
-//            $cTime = time();
-//            $u['cstime'] = date('H:i', $startTime);
-//            $u['cetime'] = date('H:i', $endTime);
-//            if ($cTime < $startTime || $cTime == $startTime) {
-//                $u['state'] = 0;// 未开始
-//            }
-//            if ($cTime < $endTime && $cTime > $startTime) {
-//                $u['state'] = 1;//进行中
-//            }
-//            if ($cTime > $endTime || $cTime == $endTime) {
-//                $u['state'] = 2;//结束了
-//                continue;
-//            }
-//            $u['id'] = $ut['id'];
-//            array_push($newCourses, $u);
-//        }
-//        $aaa = array();
-//        for ($i = 0; $i < count($newCourses); $i++) {
-//            $aaa[$newCourses[$i]['cday'] . " " . $newCourses[$i]['cstime']] = $i;
-//        }
-//        krsort($aaa);
-//        $nn = array();
-//        foreach ($aaa as $k => $v) {
-//            array_push($nn, $newCourses[$v]);
-//        }
-        return $newCourses;
-    }
+
 
     public function cardlist()
     {
@@ -328,7 +264,6 @@ class VipController extends AdminbaseController
             $this->ajaxReturn(array("status" => false, 'msg' => '非法ID'), "JSON");
         }
     }
-
 
 
 }

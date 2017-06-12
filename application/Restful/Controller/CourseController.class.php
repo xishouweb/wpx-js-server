@@ -139,9 +139,15 @@ class CourseController extends AdminbaseController
     //用卡买课
     public function cardBuyCourse($userId, $courseId, $cardId)
     {
+        $course = D("course")->find($courseId);
+        $ut = D("user_card_course")->where(array("userid" => $userId, "cdate" => $course['cday'], "timeid" => $course['timeid']))->select();
+        if ($ut) {
+            $this->ajaxReturn(array("status" => false, 'msg' => '你的时间只有一份，可是想约了两个教练？！'), "JSON");
+            return;
+        }
         $user = D("oauth_user")->find($userId);
         $card = D("card")->find($cardId);
-        $course = D("course")->find($courseId);
+
         if (!($user && $card && $course)) {
             $this->ajaxReturn(array("status" => false, "msg" => "非法ID"), "JSON");
         }
@@ -167,7 +173,7 @@ class CourseController extends AdminbaseController
         //记录教练被占用事件
         $utid=D("user_teacher")->add(array("userid"=>$userId,"teacherid"=>$course['teacher'],"timeid"=>$course['timeid'],"create_time"=>date("Y-m-d H:i:s"),"cardid"=>$cardId,"cdate"=>$course['cday']));
         //用卡买课程
-        D("user_card_course")->add(array("userid" => $userId, "cardid" => $cardId, "courseid" => $courseId, "create_time" => date("Y-m-d H:i:s"),"user_teacher_id"=>$utid));
+        D("user_card_course")->add(array("userid" => $userId, "cardid" => $cardId, "courseid" => $courseId, "create_time" => date("Y-m-d H:i:s"),"timeid"=>$course['timeid'],"cdate"=>$course['cday'],"teacherid"=>$course['teacher']));
         //用卡买课程的记录
         D("user_card_course_record")->add(array("userid" => $userId, "cardid" => $cardId, "courseid" => $courseId, "create_time" => date("Y-m-d H:i:s")));
         $allCourse = $this->courseList($course["cday"], $userId);

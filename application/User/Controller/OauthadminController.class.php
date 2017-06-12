@@ -93,7 +93,7 @@ class OauthadminController extends AdminbaseController
             //用户累积消费
             $ou = D("oauth_user")->where(array("openid" => $openid))->find();
             $sum_fee = intval($ou["sum_fee"]) + intval($cashFee);
-            D("oauth_user")->where(array("openid" => $openid))->save(array("sum_fee" => $sum_fee));
+            D("oauth_user")->where(array("openid" => $openid))->save(array("sum_fee" => $sum_fee*100));
             //用户消费记录 卡关联
             D("user_card")->add(array("openid" => $openid, "cashfee" => $cashFee, "cardid" => $cardId, "buy_time" => date('Y-m-d H:i:s'), 'use_number' => $card['ctimes'], 'expire_time' => $expire));
 

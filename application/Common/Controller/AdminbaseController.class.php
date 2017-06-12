@@ -46,6 +46,95 @@ class AdminbaseController extends AppframeController {
 		}
 	}
 
+    public function jsRecords($userId)
+    {
+        $courses = D("user_card_course")->where(array("userid" => $userId))->select();
+        $newCourses = array();
+        foreach ($courses as $cs) {
+            $js = array();
+            if ($cs['courseid'] == "0") {
+                $time = D("time")->find($cs['timeid']);
+                $startTime = strtotime($cs['cdate'] . " " . $time['stime']);
+                $endTime = strtotime($cs['cdate'] . " " . $time['etime']);
+                $js['cday'] = $cs['cdate'];
+                $teacher = D('teacher')->where(array("id" => $cs["teacherid"]))->find();
+                $js['cname'] = $teacher['tname'] . "的私教课";
+                $js['id'] = $cs['id'];
+            } else {
+                $course = D("course")->find($cs['courseid']);
+                $startTime = strtotime($course['cday'] . " " . $course['cstime']);
+                $endTime = strtotime($course['cday'] . " " . $course['cetime']);
+                $js['cday'] = $course['cday'];
+                $teacher = D('teacher')->where(array("id" => $course["teacher"]))->find();
+                $js['cname'] = $course['cname'];
+                $js['id'] = $cs['courseid'];
+            }
+            $js["teacher"] = $teacher["tname"];
+            $js["icon"] = $teacher["headimg"];
+            $cTime = time();
+            if ($cTime < $startTime || $cTime == $startTime) {
+                $js['state'] = 0;// 未开始
+            }
+            if ($cTime < $endTime && $cTime > $startTime) {
+                $js['state'] = 1;//进行中
+            }
+            if ($cTime > $endTime || $cTime == $endTime) {
+                $js['state'] = 2;//结束了
+            }
+            $js['cstime'] = date('H:i', $startTime);
+            $js['cetime'] = date('H:i', $endTime);
+
+            array_push($newCourses, $js);
+        }
+
+        $aaa = array();
+        for ($i = 0; $i < count($newCourses); $i++) {
+            $aaa[$newCourses[$i]['cday'] . " " . $newCourses[$i]['cstime']] = $i;
+        }
+        krsort($aaa);
+        $nn = array();
+        foreach ($aaa as $k => $v) {
+            array_push($nn, $newCourses[$v]);
+        }
+//        foreach ($uts as $ut) {
+//            $u = array();
+//            $teacher = D("teacher")->find($ut['teacherid']);
+//            $u['icon'] = $teacher['headimg'];
+//            $u['teacher'] = $teacher['tname'];
+//            $u['cday'] = date("Y-m-d", strtotime($ut['cdate']));
+//            $u['cname'] = $teacher['tname'] . "的私教课";
+//
+//            $time = D("time")->find($ut["timeid"]);
+//            $startTime = strtotime($ut['date'] . " " . $time['stime']);
+//            $endTime = strtotime($ut['date'] . " " . $time['etime']);
+//            $cTime = time();
+//            $u['cstime'] = date('H:i', $startTime);
+//            $u['cetime'] = date('H:i', $endTime);
+//            if ($cTime < $startTime || $cTime == $startTime) {
+//                $u['state'] = 0;// 未开始
+//            }
+//            if ($cTime < $endTime && $cTime > $startTime) {
+//                $u['state'] = 1;//进行中
+//            }
+//            if ($cTime > $endTime || $cTime == $endTime) {
+//                $u['state'] = 2;//结束了
+//                continue;
+//            }
+//            $u['id'] = $ut['id'];
+//            array_push($newCourses, $u);
+//        }
+//        $aaa = array();
+//        for ($i = 0; $i < count($newCourses); $i++) {
+//            $aaa[$newCourses[$i]['cday'] . " " . $newCourses[$i]['cstime']] = $i;
+//        }
+//        krsort($aaa);
+//        $nn = array();
+//        foreach ($aaa as $k => $v) {
+//            array_push($nn, $newCourses[$v]);
+//        }
+        return $nn;
+    }
+
 	/**
 	 * 初始化后台菜单
 	 */

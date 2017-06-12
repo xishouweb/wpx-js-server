@@ -13,9 +13,10 @@
 namespace Restful\Controller;
 
 use Restful\Common\SendMNS;
-use Think\Controller;
+use Common\Controller\AdminbaseController;
 
-class OauthController extends Controller
+
+class OauthController extends AdminbaseController
 {
 
     private $appId;
@@ -278,15 +279,32 @@ class OauthController extends Controller
 
     private function times($teacherid, $day)
     {
+        $today = false;
+
+        if (strtotime($day) == strtotime(date("Y-m-d") . "")) {
+            $today = true;
+        }
         $times = D("time")->order("stime asc")->select();
         $newTimes = array();
         foreach ($times as $time) {
-            $ut = D("user_teacher")->where(array("teacherid" => $teacherid, "timeid" => $time['id'], "cdate" => $day))->select();
-            $state = false;
-            if (!empty($ut)) {
-                $state = true;
+            if ($today && strtotime($time['stime']) < time()) {
+                continue;
             }
-            $ntime = array("state" => $state, "id" => $time['id'], "etime" => date("H:i", strtotime($time['etime'])), "stime" => date("H:i", strtotime($time['stime'])));
+            $ut = D("user_card_course")->where(array("teacherid" => $teacherid, "timeid" => $time['id'], "cdate" => $day))->find();
+            $state = 0;
+            $userheadimg = "";
+            if (!empty($ut)) {
+                if ($ut['courseid'] == "0") {
+                    $user = D("oauth_user")->find($ut['userid']);
+                    $userheadimg = $user['head_img'];
+                    $state = 1;
+                }
+                $cou = D("course")->where(array("teacher" => $teacherid, "timeid" => $time['id'], "cday" => $ut['cdate']))->find();
+                if ($cou) {
+                    $state = 2;
+                }
+            }
+            $ntime = array("state" => $state, "userimg" => $userheadimg, "id" => $time['id'], "etime" => date("H:i", strtotime($time['etime'])), "stime" => date("H:i", strtotime($time['stime'])));
             array_push($newTimes, $ntime);
         }
         return $newTimes;
@@ -307,7 +325,7 @@ class OauthController extends Controller
         $ucs = D("user_card")->where(array('openid' => $user['openid'], "cardid" => $cardid))->find();
         if ($user && $card && $teahcer && $time && $ucs) {
             //添加用户约哪个教练
-            $utid = D("user_card_course")->add(array("userid" => $userid, "teacherid" => $teacherid, "cdate" => $date, "timeid" => $timeid, "cardid" => $cardid, "create_time" => date("Y-m-d H:i:s")));
+            $utid = D("user_card_course")->add(array("userid" => $userid, "courseid" => "0", "teacherid" => $teacherid, "cdate" => $date, "timeid" => $timeid, "cardid" => $cardid, "create_time" => date("Y-m-d H:i:s")));
             //去除卡的次数
             //月卡0:不减1 ,次卡1 :减1
             if (intval($card["ctype"]) == 1 && intval($ucs["use_number"]) != 0) {
@@ -315,7 +333,7 @@ class OauthController extends Controller
                 D("user_card")->where(array('openid' => $user['openid'], "cardid" => $cardid))->save(array("use_number" => $number));
             }
             $ucid = $ucs['id'];
-            $times = $this->times($teacherid, $date);
+            $times = $this->times($teacherid, $date, $userid);
             $this->sendMsg($user['openid'], "预约私教成功！\n您预约了" . $teahcer['sign'] . " " . $teahcer['tname'] . "的私教\n时间：" . $date . "\n" . date("H:i", strtotime($time['stime'])) . "到" . date("H:i", strtotime($time['etime'])) . "\n取消预约点击 <a href='http://www.gm-fitness.com:8080/vip'>残忍取消</a> 到健身记录中取消");
             $this->ajaxReturn(array("times" => $times, "status" => true, 'msg' => '预约成功啦'), "JSON");
         } else {
@@ -323,77 +341,9 @@ class OauthController extends Controller
         }
     }
 
-    private function jsRecords($userId)
-    {
-        $courses =D("user_card_course")->join('jmqjcourse ON jmqjcourse.id = jmqjuser_card_course.courseid')->order("jmqjcourse.cday DESC")->where(array("jmqjuser_card_course.userid" => $userId))->select();
-        $uts = D("user_teacher")->where(array("userid" => $userId))->select();
-        $newCourses = array();
-        foreach ($courses as $cs) {
-            $c = D("course")->find($cs['courseid']);
-            $startTime = strtotime($c['cday'] . " " . $c['cstime']);
-            $endTime = strtotime($c['cday'] . " " . $c['cetime']);
-            $cTime = time();
-            if ($cTime < $startTime || $cTime == $startTime) {
-                $c['state'] = 0;// 未开始
-            }
-            if ($cTime < $endTime && $cTime > $startTime) {
-                $c['state'] = 1;//进行中
-            }
-            if ($cTime > $endTime || $cTime == $endTime) {
-                $c['state'] = 2;//结束了
-                continue;
-            }
-            $c['cstime'] = date('H:i', strtotime($c['cstime']));
-            $c['cetime'] = date('H:i', strtotime($c['cetime']));
-            $teacher = D('teacher')->where(array("id" => $c["teacher"]))->find();
-            $c["teacher"] = $teacher["tname"];
-            $c["icon"] = $teacher["headimg"];
-            array_push($newCourses, $c);
-        }
-//        foreach ($uts as $ut) {
-//            $u = array();
-//            $teacher = D("teacher")->find($ut['teacherid']);
-//            $u['icon'] = $teacher['headimg'];
-//            $u['teacher'] = $teacher['tname'];
-//            $u['cday'] = date("Y-m-d", strtotime($ut['cdate']));
-//            $u['cname'] = $teacher['tname'] . "的私教课";
-//
-//            $time = D("time")->find($ut["timeid"]);
-//            $startTime = strtotime($ut['date'] . " " . $time['stime']);
-//            $endTime = strtotime($ut['date'] . " " . $time['etime']);
-//            $cTime = time();
-//            $u['cstime'] = date('H:i', $startTime);
-//            $u['cetime'] = date('H:i', $endTime);
-//            if ($cTime < $startTime || $cTime == $startTime) {
-//                $u['state'] = 0;// 未开始
-//            }
-//            if ($cTime < $endTime && $cTime > $startTime) {
-//                $u['state'] = 1;//进行中
-//            }
-//            if ($cTime > $endTime || $cTime == $endTime) {
-//                $u['state'] = 2;//结束了
-//                continue;
-//            }
-//            $u['id'] = $ut['id'];
-//            array_push($newCourses, $u);
-//        }
-//        $aaa = array();
-//        for ($i = 0; $i < count($newCourses); $i++) {
-//            $aaa[$newCourses[$i]['cday'] . " " . $newCourses[$i]['cstime']] = $i;
-//        }
-//        krsort($aaa);
-//        $nn = array();
-//        foreach ($aaa as $k => $v) {
-//            array_push($nn, $newCourses[$v]);
-//        }
-        return $newCourses;
-    }
-
 
     public function cancelOrderCourse($userId, $courseId)
     {
-
-
         $ucc = D("user_card_course")->where(array("userid" => $userId, "courseid" => $courseId))->find();
         $u = D("oauth_user")->find($userId);
         $uc = D("user_card")->where(array("cardid" => $ucc["cardid"], "openid" => $u["openid"]))->find();
@@ -424,7 +374,7 @@ class OauthController extends Controller
 
     private function cancelOrderTeacher($utid)
     {
-        $ut = D("user_teacher")->find(intval($utid));
+        $ut = D("user_card_course")->find(intval($utid));
         if (empty($ut)) {
             $this->ajaxReturn(array("status" => false, 'msg' => '没约过这个教练的时间啊'), "JSON");
         } else {
@@ -436,9 +386,9 @@ class OauthController extends Controller
                 D("user_card")->where(array("id" => $uc['id']))->save(array("use_number" => $number));
             }
             $this->sendMsg($uc['openid'], "取消预约私教成功！");
-            D("user_teacher")->delete($utid);
+            D("user_card_course")->delete($utid);
             $jsr = $this->jsRecords($ut['userid']);
-            $this->ajaxReturn(array("status" => true, 'msg' => '取消预约私教成功','data'=>$jsr), "JSON");
+            $this->ajaxReturn(array("status" => true, 'msg' => '取消预约私教成功', 'data' => $jsr), "JSON");
         }
 
     }
