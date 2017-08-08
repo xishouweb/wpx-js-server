@@ -27,65 +27,37 @@ class TrainerController extends AdminbaseController
         $user = D("oauth_user")->find($userid);
         $teacher = D("teacher")->where(array("openid" => $user['openid']))->find();
         if ($teacher) {
-            $courses=$this->teacherRecords($teacher['id']);
-            $this->ajaxReturn(array("courses"=>$courses,"trainer" => $teacher, "status" => true), "JSON");
+            $courses = $this->tuankeRecords($teacher['id']);
+            $this->ajaxReturn(array("courses" => $courses, "trainer" => $teacher, "status" => true), "JSON");
         } else {
             $this->ajaxReturn(array("status" => false), "JSON");
         }
     }
 
-    private function teacherRecords($teacherid)
+    public function sijiaos($userid)
     {
-        $courses = D("user_card_course")->where(array("teacherid" => $teacherid))->select();
-        $newCourses = array();
-        foreach ($courses as $cs) {
-            $js = array();
-            if ($cs['courseid'] == "0") {
-                $time = D("time")->find($cs['timeid']);
-                $startTime = strtotime($cs['cdate'] . " " . $time['stime']);
-                $endTime = strtotime($cs['cdate'] . " " . $time['etime']);
-                $js['cday'] = $cs['cdate'];
-                $teacher = D('teacher')->where(array("id" => $cs["teacherid"]))->find();
-                $js['cname'] = $teacher['tname'] . "的私教课";
-                $js['id'] = $cs['id'];
-            } else {
-                $course = D("course")->find($cs['courseid']);
-                $startTime = strtotime($course['cday'] . " " . $course['cstime']);
-                $endTime = strtotime($course['cday'] . " " . $course['cetime']);
-                $js['cday'] = $course['cday'];
-                $teacher = D('teacher')->where(array("id" => $course["teacher"]))->find();
-                $js['cname'] = $course['cname'];
-                $js['id'] = $cs['courseid'];
-            }
-            $js["teacher"] = $teacher["tname"];
-            $js["icon"] = $teacher["headimg"];
-            $cTime = time();
-            if ($cTime < $startTime || $cTime == $startTime) {
-                $js['state'] = 0;// 未开始
-            }
-            if ($cTime < $endTime && $cTime > $startTime) {
-                $js['state'] = 1;//进行中
-            }
-            if ($cTime > $endTime || $cTime == $endTime) {
-                $js['state'] = 2;//结束了
-            }
-            $js['cstime'] = date('H:i', $startTime);
-            $js['cetime'] = date('H:i', $endTime);
-
-            array_push($newCourses, $js);
+        $user = D("oauth_user")->find($userid);
+        $teacher = D("teacher")->where(array("openid" => $user['openid']))->find();
+        if ($teacher) {
+            $courses = $this->sijiaoRecords($teacher['id']);
+            $this->ajaxReturn(array("data" => $courses, "status" => true), "JSON");
+        } else {
+            $this->ajaxReturn(array("status" => false), "JSON");
         }
-
-        $aaa = array();
-        for ($i = 0; $i < count($newCourses); $i++) {
-            $aaa[$newCourses[$i]['cday'] . " " . $newCourses[$i]['cstime']] = $i;
-        }
-        krsort($aaa);
-        $nn = array();
-        foreach ($aaa as $k => $v) {
-            array_push($nn, $newCourses[$v]);
-        }
-        return $nn;
     }
+
+    public function tuankes($userid)
+    {
+        $user = D("oauth_user")->find($userid);
+        $teacher = D("teacher")->where(array("openid" => $user['openid']))->find();
+        if ($teacher) {
+            $courses = $this->tuankeRecords($teacher['id']);
+            $this->ajaxReturn(array("data" => $courses, "status" => true), "JSON");
+        } else {
+            $this->ajaxReturn(array("status" => false), "JSON");
+        }
+    }
+
 
     // 后台文章管理列表
     public function teachers()
@@ -129,10 +101,10 @@ class TrainerController extends AdminbaseController
                     $userheadimg = $user['head_img'];
                     $state = 1;
                 }
-                $cou = D("course")->where(array("teacher" => $teacherid, "timeid" => $time['id'], "cday" => $ut['cdate']))->find();
-                if ($cou) {
-                    $state = 2;
-                }
+            }
+            $cou = D("course")->where(array("teacher" => $teacherid, "timeid" => $time['id'], "cday" => $day))->find();
+            if ($cou) {
+                $state = 2;
             }
             $ntime = array("state" => $state, "userimg" => $userheadimg, "id" => $time['id'], "etime" => date("H:i", strtotime($time['etime'])), "stime" => date("H:i", strtotime($time['stime'])));
             array_push($newTimes, $ntime);
@@ -149,12 +121,13 @@ class TrainerController extends AdminbaseController
         $cards = array();
         foreach ($ucs as $uc) {
             $card = D("card")->find($uc['cardid']);
+            //精品私教课 id是3 不可更改
             if ($card['cftype'] == 3) {
                 if (date("Y-m-d", strtotime($uc["expire_time"])) > date("Y-m-d") || date("Y-m-d", strtotime($uc["expire_time"])) == date("Y-m-d")) {
                     if ($uc["use_number"] != -1) {
                         if ($uc["use_number"] > 0) {
                             $newUc = array();
-                            $newUc["id"] = $uc["cardid"];
+                            $newUc["id"] = $uc["id"];
                             $newUc["name"] = $card["cname"];
                             $newUc["usetimes"] = $uc["use_number"];
                             $newUc["day"] = date('Y-m-d', strtotime($uc["expire_time"]));;
@@ -162,7 +135,7 @@ class TrainerController extends AdminbaseController
                         }
                     } else {
                         $newU = array();
-                        $newU["id"] = $uc["cardid"];
+                        $newU["id"] = $uc["id"];
                         $newU["name"] = $card["cname"];
                         $newU["usetimes"] = $uc["use_number"];
                         $newU["day"] = date('Y-m-d', strtotime($uc["expire_time"]));;
@@ -174,4 +147,150 @@ class TrainerController extends AdminbaseController
         $this->ajaxReturn(array("data" => $cards, "status" => true), "JSON");
     }
 
+    private function tuankeRecords($teacherid)
+    {
+//        $peosonCourses = D("user_card_course")->where("teacherid=" . $teacherid . " and courseid='0'")->select();
+//        $newCourses = array();
+//        foreach ($peosonCourses as $cs) {
+//            $js = array();
+//            $time = D("time")->find($cs['timeid']);
+//            $startTime = strtotime($cs['cdate'] . " " . $time['stime']);
+//            $endTime = strtotime($cs['cdate'] . " " . $time['etime']);
+//            $js['cday'] = $cs['cdate'];
+//            $teacher = D('teacher')->where(array("id" => $cs["teacherid"]))->find();
+//            $js['cname'] = $teacher['tname'] . "的私教课";
+//            $js['id'] = $cs['id'];
+//            $js['cftype'] = "精品私教课";
+//            $js['type'] = 0;//私教
+//            $users = array();
+//            $user = D("oauth_user")->find($cs['userid']);
+//            array_push($users, $user);
+//            $js['users'] = $users;
+//
+//            $js["teacher"] = $teacher["tname"];
+//            $js["icon"] = $teacher["headimg"];
+//            $cTime = time();
+//            if ($cTime < $startTime || $cTime == $startTime) {
+//                $js['state'] = 0;// 未开始
+//            }
+//            if ($cTime < $endTime && $cTime > $startTime) {
+//                $js['state'] = 1;//进行中
+//            }
+//            if ($cTime > $endTime || $cTime == $endTime) {
+//                $js['state'] = 2;//结束了
+//            }
+//            $js['cstime'] = date('H:i', $startTime);
+//            $js['cetime'] = date('H:i', $endTime);
+//
+//            array_push($newCourses, $js);
+//        }
+
+        $courses = D("course")->where("teacher=" . $teacherid . " and ccpeople!=0")->order("cday DESC")->select();
+        $newCourses = array();
+        foreach ($courses as $course) {
+            $c = array();
+            $startTime = strtotime($course['cday'] . " " . $course['cstime']);
+            $endTime = strtotime($course['cday'] . " " . $course['cetime']);
+            $c['cday'] = $course['cday'];
+            $c['cname'] = $course['cname'];
+            $c['id'] = $course['id'];
+            $type = D("course_type")->find($course['cftype']);
+            $c['cftype'] = $type['tname'];
+            $c['ccpeople'] = $course['ccpeople'];
+            $users=array();
+            $uccs=D("user_card_course")->where(array("courseid"=>$course['id']))->select();
+            foreach ($uccs as $ucc){
+                $u=array();
+                $u['userid']=$ucc['userid'];
+                $user=D("oauth_user")->find($ucc['userid']);
+                $u['username']=$user['name'];
+                $u['tel']=$user['tel'];
+                $u['truename']=$user['true_name'];
+                $u['headimg']=$user['head_img'];
+                array_push($users,$u);
+            }
+
+            $c['users'] = $users;
+            $cTime = time();
+            if ($cTime < $startTime || $cTime == $startTime) {
+                $c['state'] = "未开始";// 未开始
+            }
+            if ($cTime < $endTime && $cTime > $startTime) {
+                $c['state'] = "进行中";//进行中
+            }
+            if ($cTime > $endTime || $cTime == $endTime) {
+                $c['state'] = "结束了";//结束了
+            }
+            $c['cstime'] = date('H:i', $startTime);
+            $c['cetime'] = date('H:i', $endTime);
+
+            array_push($newCourses, $c);
+
+        }
+
+        $aaa = array();
+        for ($i = 0; $i < count($newCourses); $i++) {
+            $aaa[$newCourses[$i]['cday'] . " " . $newCourses[$i]['cstime']] = $i;
+        }
+        krsort($aaa);
+        $nn = array();
+        foreach ($aaa as $k => $v) {
+            array_push($nn, $newCourses[$v]);
+        }
+        return $newCourses;
+    }
+
+    private function sijiaoRecords($teacherid)
+    {
+        $peosonCourses = D("user_card_course")->where("teacherid=" . $teacherid . " and courseid='0'")->group("userid")->select();
+        $newCourses = array();
+        foreach ($peosonCourses as $cs) {
+            $js = array();
+            $time = D("time")->find($cs['timeid']);
+            $startTime = strtotime($cs['cdate'] . " " . $time['stime']);
+            $endTime = strtotime($cs['cdate'] . " " . $time['etime']);
+            $js['cday'] = $cs['cdate'];
+            $js['userid']=$cs['userid'];
+            $user = D("oauth_user")->find($cs['userid']);
+            $js['username']=$user['name'];
+            $js['truename']=$user['true_name'];
+            $js['headimg']=$user['head_img'];
+            $js['tel']=$user['tel'];
+            $js['cstime'] = date('H:i', $startTime);
+            $js['cetime'] = date('H:i', $endTime);
+
+            array_push($newCourses, $js);
+        }
+
+        $aaa = array();
+        for ($i = 0; $i < count($newCourses); $i++) {
+            $aaa[$newCourses[$i]['cday'] . " " . $newCourses[$i]['cstime']] = $i;
+        }
+        krsort($aaa);
+        $nn = array();
+        foreach ($aaa as $k => $v) {
+            array_push($nn, $newCourses[$v]);
+        }
+        return $nn;
+    }
+
+    //课程学员
+    public function courseUser($id, $type)
+    {
+        $users = array();
+        if ($type == 0) {
+            //私教
+            $ucc = D("user_card_course")->find($id);
+            $user = D("oauth_user")->find($ucc['userid']);
+            array_push($users, $user);
+        }
+        if ($type == 1) {
+            $ucs = D("user_card_course")->where(array("courseid" => $id))->select();
+            foreach ($ucs as $uc) {
+                $u = D("oauth_user")->find($uc['userid']);
+                array_push($users, $u);
+            }
+        }
+        $this->ajaxReturn(array("data" => $users, "status" => true), "JSON");
+    }
 }

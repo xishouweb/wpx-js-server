@@ -52,7 +52,7 @@ class SendMessageRequest extends BaseRequest
         $xmlWriter = new \XMLWriter;
         $xmlWriter->openMemory();
         $xmlWriter->startDocument("1.0", "UTF-8");
-        $xmlWriter->startElementNS(NULL, "MobileCodeDayu", Constants::MNS_XML_NAMESPACE);
+        $xmlWriter->startElementNS(NULL, "mobile_code_dayu", Constants::MNS_XML_NAMESPACE);
         $this->writeMessagePropertiesForSendXML($xmlWriter, $this->base64);
         $xmlWriter->endElement();
         $xmlWriter->endDocument();

@@ -32,11 +32,11 @@ class CourseController extends AdminbaseController
 
     public function courseTypes()
     {
-        $courseTypes =D("course_type")->where(array("state"=>1))->select();
-        $newcs=array();
-        foreach($courseTypes as $courseType){
-             $courseType["tdesc"]=str_replace("/data/upload/ueditor/","http://gm.wujiesheying.com/data/upload/ueditor/",$courseType["tdesc"]);
-             array_push($newcs,$courseType);
+        $courseTypes = D("course_type")->where(array("state" => 1))->select();
+        $newcs = array();
+        foreach ($courseTypes as $courseType) {
+            $courseType["tdesc"] = str_replace("/data/upload/ueditor/", "http://gm.wujiesheying.com/data/upload/ueditor/", $courseType["tdesc"]);
+            array_push($newcs, $courseType);
         }
         $this->ajaxReturn(array("data" => $newcs, "status" => true), "JSON");
     }
@@ -116,7 +116,7 @@ class CourseController extends AdminbaseController
                     if ($uc["use_number"] != -1) {
                         if ($uc["use_number"] > 0) {
                             $newUc = array();
-                            $newUc["id"] = $uc["cardid"];
+                            $newUc["id"] = $uc["id"];
                             $newUc["name"] = $card["cname"];
                             $newUc["usetimes"] = $uc["use_number"];
                             $newUc["day"] = date('Y-m-d', strtotime($uc["expire_time"]));;
@@ -124,7 +124,7 @@ class CourseController extends AdminbaseController
                         }
                     } else {
                         $newU = array();
-                        $newU["id"] = $uc["cardid"];
+                        $newU["id"] = $uc["id"];
                         $newU["name"] = $card["cname"];
                         $newU["usetimes"] = $uc["use_number"];
                         $newU["day"] = date('Y-m-d', strtotime($uc["expire_time"]));;
@@ -140,15 +140,15 @@ class CourseController extends AdminbaseController
     public function cardBuyCourse($userId, $courseId, $cardId)
     {
         $course = D("course")->find($courseId);
+        $ucs = D("user_card")->where(array("id" => $cardId))->find();
         $ut = D("user_card_course")->where(array("userid" => $userId, "cdate" => $course['cday'], "timeid" => $course['timeid']))->select();
         if ($ut) {
             $this->ajaxReturn(array("status" => false, 'msg' => '你的时间只有一份，可是想约了两个教练？！'), "JSON");
             return;
         }
         $user = D("oauth_user")->find($userId);
-        $card = D("card")->find($cardId);
-
-        if (!($user && $card && $course)) {
+        $card = D("card")->find($ucs['cardid']);
+        if (!($user && $ucs && $card && $course)) {
             $this->ajaxReturn(array("status" => false, "msg" => "非法ID"), "JSON");
         }
         $uc = D("user_card_course")->where(array("userid" => $userId, "courseid" => $courseId))->count();
@@ -163,17 +163,15 @@ class CourseController extends AdminbaseController
         }
 
 
-        $ucs = D("user_card")->where(array('openid' => $user['openid'], "cardid" => $cardId))->find();
         //月卡0:不减1 ,次卡1 :减1
         if (intval($card["ctype"]) == 1 && intval($ucs["use_number"]) != 0) {
-
             $number = intval($ucs["use_number"]) - 1;//当前次数
-            D("user_card")->where(array('openid' => $user['openid'], "cardid" => $cardId))->save(array("use_number" => $number));
+            D("user_card")->where(array("id" => $cardId))->save(array("use_number" => $number));
         }
         //记录教练被占用事件
-        $utid=D("user_teacher")->add(array("userid"=>$userId,"teacherid"=>$course['teacher'],"timeid"=>$course['timeid'],"create_time"=>date("Y-m-d H:i:s"),"cardid"=>$cardId,"cdate"=>$course['cday']));
+        $utid = D("user_teacher")->add(array("userid" => $userId, "teacherid" => $course['teacher'], "timeid" => $course['timeid'], "create_time" => date("Y-m-d H:i:s"), "cardid" => $cardId, "cdate" => $course['cday']));
         //用卡买课程
-        D("user_card_course")->add(array("userid" => $userId, "cardid" => $cardId, "courseid" => $courseId, "create_time" => date("Y-m-d H:i:s"),"timeid"=>$course['timeid'],"cdate"=>$course['cday'],"teacherid"=>$course['teacher']));
+        D("user_card_course")->add(array("userid" => $userId, "cardid" => $cardId, "courseid" => $courseId, "create_time" => date("Y-m-d H:i:s"), "timeid" => $course['timeid'], "cdate" => $course['cday'], "teacherid" => $course['teacher']));
         //用卡买课程的记录
         D("user_card_course_record")->add(array("userid" => $userId, "cardid" => $cardId, "courseid" => $courseId, "create_time" => date("Y-m-d H:i:s")));
         $allCourse = $this->courseList($course["cday"], $userId);
@@ -197,5 +195,5 @@ class CourseController extends AdminbaseController
         $this->ajaxReturn(array("status" => true, "data" => $adsNew), "JSON");
     }
 
-    
+
 }

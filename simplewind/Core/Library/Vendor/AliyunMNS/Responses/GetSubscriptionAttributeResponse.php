@@ -60,9 +60,9 @@ class GetSubscriptionAttributeResponse extends BaseResponse
             $result = XMLParser::parseNormalError($xmlReader);
             if ($result['Code'] == Constants::SUBSCRIPTION_NOT_EXIST)
             {
-                throw new SubscriptionNotExistException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+                throw new SubscriptionNotExistException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
             }
-            throw new MnsException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new MnsException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         }
         catch (\Exception $e)
         {

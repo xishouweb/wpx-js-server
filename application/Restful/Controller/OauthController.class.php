@@ -311,7 +311,9 @@ class OauthController extends AdminbaseController
     }
 
     //约私教
+    //这里的cardid是user_card的id
     public function orderTeacher($userid, $teacherid, $date, $timeid, $cardid)
+
     {
         $ut = D("user_card_course")->where(array("userid" => $userid, "cdate" => $date, "timeid" => $timeid))->select();
         if ($ut) {
@@ -319,10 +321,10 @@ class OauthController extends AdminbaseController
             return;
         }
         $user = D("oauth_user")->find($userid);
-        $card = D("card")->find($cardid);
         $teahcer = D("teacher")->find($teacherid);
         $time = D("time")->find($timeid);
-        $ucs = D("user_card")->where(array('openid' => $user['openid'], "cardid" => $cardid))->find();
+        $ucs = D("user_card")->where(array("id" => $cardid))->find();
+        $card = D("card")->find($ucs['cardid']);
         if ($user && $card && $teahcer && $time && $ucs) {
             //添加用户约哪个教练
             $utid = D("user_card_course")->add(array("userid" => $userid, "courseid" => "0", "teacherid" => $teacherid, "cdate" => $date, "timeid" => $timeid, "cardid" => $cardid, "create_time" => date("Y-m-d H:i:s")));
@@ -330,7 +332,7 @@ class OauthController extends AdminbaseController
             //月卡0:不减1 ,次卡1 :减1
             if (intval($card["ctype"]) == 1 && intval($ucs["use_number"]) != 0) {
                 $number = intval($ucs["use_number"]) - 1;//当前次数
-                D("user_card")->where(array('openid' => $user['openid'], "cardid" => $cardid))->save(array("use_number" => $number));
+                D("user_card")->where(array("id" => $cardid))->save(array("use_number" => $number));
             }
             $ucid = $ucs['id'];
             $times = $this->times($teacherid, $date, $userid);
@@ -346,7 +348,7 @@ class OauthController extends AdminbaseController
     {
         $ucc = D("user_card_course")->where(array("userid" => $userId, "courseid" => $courseId))->find();
         $u = D("oauth_user")->find($userId);
-        $uc = D("user_card")->where(array("cardid" => $ucc["cardid"], "openid" => $u["openid"]))->find();
+        $uc = D("user_card")->where(array("id" => $ucc["cardid"]))->find();
         $c = D("course")->find($courseId);
         if ($ucc && $u && $c && $uc) {
             //月卡0:不减1 ,次卡1 :减1
@@ -379,7 +381,7 @@ class OauthController extends AdminbaseController
             $this->ajaxReturn(array("status" => false, 'msg' => '没约过这个教练的时间啊'), "JSON");
         } else {
             $user = D("oauth_user")->find($ut['userid']);
-            $uc = D("user_card")->where(array('openid' => $user['openid'], "cardid" => $ut['cardid']))->find();
+            $uc = D("user_card")->where(array("id" => $ut['cardid']))->find();
             $card = D("card")->find($uc["cardid"]);
             if (intval($card["ctype"]) == 1 && intval($uc["use_number"]) != 0) {
                 $number = intval($uc["use_number"]) + 1;//当前次数

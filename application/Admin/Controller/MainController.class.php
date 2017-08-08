@@ -14,14 +14,23 @@ class MainController extends AdminbaseController
         $mysql = $mysql[0]['version'];
         $mysql = empty($mysql) ? L('UNKNOWN') : $mysql;
 
+
         $courseNum = D("course")->count();
         $cardNum = D("card")->count();
         $feeSum = D("user_card")->where("openid!='opVb9wKsqcutvf2PSzQjNu-I3JQE'")->sum("cashfee");
         $userNum = D("oauth_user")->count();
+        $payUserNum = D("user_card")->where("cashfee!=0")->count("id");
+        $wxpayfeeSum = D("user_card")->where("transactionid!='' and openid!='opVb9wKsqcutvf2PSzQjNu-I3JQE'")->sum("cashfee");
+
+        $xjpayfeeSum = D("user_card")->where("transactionid ='' and cashfee!=0 and openid!='opVb9wKsqcutvf2PSzQjNu-I3JQE'")->sum("cashfee");
+
         $this->assign('courseNum', $courseNum);
         $this->assign('cardNum', $cardNum);
         $this->assign('feeSum', $feeSum / 100);
         $this->assign('userNum', $userNum);
+        $this->assign('cardNum', $payUserNum);
+        $this->assign('wxpayfeeSum', $wxpayfeeSum / 100);
+        $this->assign('xjpayfeeSum', $xjpayfeeSum / 100);
 
 
         //server infomaions

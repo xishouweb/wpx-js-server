@@ -43,10 +43,10 @@ class Client implements ClientInterface
      * Client configuration settings include the following options:
      *
      * - handler: (callable) Function that transfers HTTP requests over the
-     *   wire. The function is called with a Psr7\Http\MobileCodeDayu\RequestInterface
+     *   wire. The function is called with a Psr7\Http\mobile_code_dayu\RequestInterface
      *   and array of transfer options, and must return a
      *   GuzzleHttp\Promise\PromiseInterface that is fulfilled with a
-     *   Psr7\Http\MobileCodeDayu\ResponseInterface on success. "handler" is a
+     *   Psr7\Http\mobile_code_dayu\ResponseInterface on success. "handler" is a
      *   constructor only option that cannot be overridden in per/request
      *   options. If no handler is provided, a default handler will be created
      *   that enables all of the request options below by attaching all of the

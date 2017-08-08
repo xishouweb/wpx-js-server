@@ -12,6 +12,8 @@
             <th width="250">ID</th>
             <th>{:L('TEACHER_NAME')}</th>
             <th>{:L('TEACHER_headimg')}</th>
+            <th>用户ID</th>
+            <th>手机号</th>
             <th>是否可用</th>
             <th width="180">{:L('_ACTION_')}</th>
         </tr>
@@ -27,6 +29,12 @@
                 </td>
                 <td>
                     <img src="{$teacher.headimg}" style="width: 50px">
+                </td>
+                <td>
+                    {$teacher.userid}
+                </td>
+                <td>
+                    {$teacher.tel}
                 </td>
                 <td>
                     {$teacher.state}

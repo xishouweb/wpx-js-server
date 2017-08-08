@@ -37,13 +37,13 @@ class CreateTopicResponse extends BaseResponse
 
             if ($result['Code'] == Constants::INVALID_ARGUMENT)
             {
-                throw new InvalidArgumentException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+                throw new InvalidArgumentException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
             }
             if ($result['Code'] == Constants::TOPIC_ALREADY_EXIST)
             {
-                throw new TopicAlreadyExistException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+                throw new TopicAlreadyExistException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
             }
-            throw new MnsException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new MnsException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         } catch (\Exception $e) {
             if ($exception != NULL) {
                 throw $exception;

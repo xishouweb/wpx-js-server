@@ -77,18 +77,18 @@ class BatchDeleteMessageResponse extends BaseResponse
 
         if ($result['Code'] == Constants::INVALID_ARGUMENT)
         {
-            throw new InvalidArgumentException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new InvalidArgumentException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         }
         if ($result['Code'] == Constants::QUEUE_NOT_EXIST)
         {
-            throw new QueueNotExistException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new QueueNotExistException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         }
         if ($result['Code'] == Constants::RECEIPT_HANDLE_ERROR)
         {
-            throw new ReceiptHandleErrorException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new ReceiptHandleErrorException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         }
 
-        throw new MnsException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+        throw new MnsException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
     }
 }
 

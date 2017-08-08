@@ -52,7 +52,7 @@ class BatchPeekMessageResponse extends BaseResponse
             while ($xmlReader->read())
             {
                 if ($xmlReader->nodeType == \XMLReader::ELEMENT
-                    && $xmlReader->name == 'MobileCodeDayu')
+                    && $xmlReader->name == 'mobile_code_dayu')
                 {
                     $this->messages[] = Message::fromXML($xmlReader, $this->base64);
                 }
@@ -73,13 +73,13 @@ class BatchPeekMessageResponse extends BaseResponse
             $result = XMLParser::parseNormalError($xmlReader);
             if ($result['Code'] == Constants::QUEUE_NOT_EXIST)
             {
-                throw new QueueNotExistException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+                throw new QueueNotExistException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
             }
             if ($result['Code'] == Constants::MESSAGE_NOT_EXIST)
             {
-                throw new MessageNotExistException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+                throw new MessageNotExistException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
             }
-            throw new MnsException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new MnsException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         } catch (\Exception $e) {
             if ($exception != NULL) {
                 throw $exception;

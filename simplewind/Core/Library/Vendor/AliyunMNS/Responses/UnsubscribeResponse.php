@@ -30,7 +30,7 @@ class UnsubscribeResponse extends BaseResponse
         $xmlReader = $this->loadXmlContent($content);
         try {
             $result = XMLParser::parseNormalError($xmlReader);
-            throw new MnsException($statusCode, $result['MobileCodeDayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
+            throw new MnsException($statusCode, $result['mobile_code_dayu'], $exception, $result['Code'], $result['RequestId'], $result['HostId']);
         } catch (\Exception $e) {
             if ($exception != NULL) {
                 throw $exception;

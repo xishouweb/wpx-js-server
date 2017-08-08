@@ -109,7 +109,7 @@ class Message
                 }
                 break;
             case \XMLReader::END_ELEMENT:
-                if ($xmlReader->name == 'MobileCodeDayu')
+                if ($xmlReader->name == 'mobile_code_dayu')
                 {
                     $message = new Message(
                         $messageId,
